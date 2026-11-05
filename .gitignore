@@ -1,0 +1,8 @@
+.lake/
+.staged-erdos911
+__pycache__/
+*.pyc
+paper/*.aux
+paper/*.log
+paper/*.out
+audit/local-build/

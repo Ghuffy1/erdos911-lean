@@ -1,0 +1,28 @@
+{
+  "checked_at_utc": "2026-11-05T22:42:32.7009382Z",
+  "records": [
+    {
+      "repository": "neelsomani/gpt-erdos",
+      "file": "data/solutions/911/candidate_solution.md",
+      "commit": "b6eaefa73dfd5fb26c003266caf24e0a6602e77a",
+      "blob": "6d9a58191222500515b59e57cbee73a02e11a8a0",
+      "introduced": "2026-01-19T07:02:13Z",
+      "outcome": "Explicitly states problem is open; elementary context only; no full proof.",
+      "attributed_author": "Charlie Karoubi",
+      "manifest_blob": "7c96458e1762244c0fd83dfad41df90a5c6e77bb"
+    },
+    {
+      "repository": "plasma-ai/erdos",
+      "file": "wiki/problems/ramsey_theory/E0911/_index.md",
+      "blob": "5c0ef15f738d1c068e45e12b42e5be31808b990b",
+      "file_updated": "2026-10-08T01:29:59Z",
+      "outcome": "Status open; claim none. Directory listing contained only _index.md.",
+      "url": "https://github.com/plasma-ai/erdos/blob/main/wiki/problems/ramsey_theory/E0911/_index.md"
+    },
+    {
+      "url": "https://erdosproblems.ai/problems/911",
+      "outcome": "Live HTML status Open; no claim settles problem; dynamic proof list remained loading."
+    }
+  ],
+  "priority_established": false
+}

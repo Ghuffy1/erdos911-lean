@@ -1,0 +1,1487 @@
+\documentclass[11pt]{amsart}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[letterpaper,margin=1in,headheight=12pt,headsep=14pt]{geometry}
+\usepackage{amsmath,amssymb,mathtools,microtype}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\numberwithin{equation}{section}
+\DeclareMathOperator{\Ent}{H}
+\DeclareMathOperator{\Bin}{Bin}
+\newcommand{\rhat}{\widehat R}
+\newcommand{\e}{\mathrm e}
+\newcommand{\dd}{\,\mathrm d}
+\allowdisplaybreaks[2]
+\emergencystretch=3em
+\raggedbottom
+\hypersetup{pdftitle={Size Ramsey numbers at high average degree},
+ pdfauthor={Will Howe, Grant Huffman, Jensen Kohlmeyer, Liam Kruer},
+ pdfsubject={An affirmative solution to Erdos problem 911},
+ pdfkeywords={size Ramsey numbers, graph density, probabilistic method, local lemma}}
+\title[Size Ramsey numbers at high average degree]{Size Ramsey numbers at high average degree}
+\author{Will Howe}
+\email[Will Howe]{howew@purdue.edu}
+\author{Grant Huffman}
+\email[Grant Huffman]{huffma97@purdue.edu}
+\author{Jensen Kohlmeyer}
+\email[Jensen Kohlmeyer]{jenwin@purdue.edu}
+\author{Liam Kruer}
+\email[Liam Kruer]{kruerl@purdue.edu}
+\date{November 5, 2026}
+\subjclass[2020]{05C55, 05D10}
+\keywords{size Ramsey number, graph density, probabilistic method, Lov\'asz local lemma}
+\begin{document}
+\begin{abstract}
+We prove that there is a function $f $ with $ f(C)/C\to\infty$ such that
+every finite simple graph $G $ with positive order and $ e(G)\ge C v(G)$ satisfies
+$\widehat R(G)>f(C)e(G)$ for all sufficiently large $ C$.
+This answers a question posed by Erd\H{o}s in 1982.
+The proof combines an entropy estimate for connected component types with
+adaptive sampling of possible vertex images and sparse marks on intersections
+of host neighborhoods. A separate argument treats targets with a narrow degree
+range. Degree-band reductions then assemble these estimates without a loss
+depending on the number of degree scales. The bound is uniform in the order,
+number of components, and component multiplicities of the target graph.
+A uniform dictionary argument treats the strongly unbalanced incidence
+targets. The full theorem is formalized in Lean, with the original
+quantifiers and the strict size Ramsey inequality.
+\end{abstract}
+\maketitle
+
+\section{Introduction}\label{sec:introduction}
+
+For finite simple graphs $H $ and $ G $, write $ H\to G$ if every red-blue
+coloring of $E(H)$ contains a monochromatic subgraph isomorphic to $ G$.
+The two-color size Ramsey number is
+\[
+ \widehat R(G)=\min\{e(H): H\text{ is a finite simple graph and }H\to G\}.
+\]
+It was introduced by Erd\H{o}s, Faudree, Rousseau and Schelp~\cite{EFRS}.
+All copies in this paper are ordinary subgraphs, and all logarithms are natural
+unless their base is displayed.
+
+In a last-minute addition to his 1982 survey, Erd\H{o}s~\cite[p.~78]{Erdos}
+asked whether the quotient $\widehat R(G)/e(G)$ must grow faster than the
+edge-to-vertex ratio of $G$, uniformly over all graphs of large density.
+We establish this assertion.
+
+\begin{theorem}\label{thm:main}
+There exists a function $f:\mathbb R\to\mathbb R$ such that
+\[
+ \lim_{C\to\infty}\frac{f(C)}{C}=\infty
+\]
+and, for every sufficiently large $C $, every finite simple graph $ G$ with
+$v(G)>0$ and $ e(G)\ge C v(G)$ satisfies
+\[
+ \widehat R(G)>f(C)e(G).
+\]
+\end{theorem}
+
+Equivalently, for every fixed $M>0$ there is $ C_M$ such that
+$\widehat R(G)>M C e(G)$ whenever $ C\ge C_M $ and $ e(G)\ge C v(G)>0$.
+The uniformity includes targets with arbitrarily many nonisomorphic connected
+components and arbitrary component multiplicities.
+
+Complete bipartite graphs were studied by Pikhurko~\cite{Pikhurko} and by
+Conlon, Fox and Wigderson~\cite{CFW}. These results give strong estimates for
+specified bipartite families. The earlier public working report on problem 911
+\cite{WorkingReport} records an exact minimum-degree reduction and a
+biclique-based partial result. A uniform argument must also treat targets
+with dispersed neighborhoods and many component types. The proof below uses
+the entropy of these types to select a connected component whose exceptional
+embeddings occupy few host edges.
+
+Public notes attributed to Charlie Karoubi~\cite{Karoubi} also discuss
+the elementary degree and vertex-cover bounds and explicitly leave the
+full question open. These notes and the working report are unrefereed.
+
+Related multicolor work of DeBiasio~\cite{DeBiasio} gives a lower bound
+proportional to $r^2e(H)$ for non-star connected targets when $ r$ colors
+are used. With two colors fixed, that estimate does not supply the
+density-dependent gain required here. The uniformity in the target
+density, rather than growth in the number of colors, is essential.
+
+\subsection{Outline of the proof}
+Section~\ref{sec:reductions} proves a uniform dictionary bound for
+strongly unbalanced incidence targets and reduces the remaining work
+to polynomially bounded maximum degree. Section~\ref{sec:local} gives a further reduction to
+logarithmic density on small vertex sets. In
+Sections~\ref{sec:entropy} and~\ref{sec:blocks}, a biased forest count and
+dense-block extraction force a class with many distinct component types.
+Sections~\ref{sec:near-regular} and~\ref{sec:incidence} use this class to
+construct avoiding colorings in two complementary degree regimes. The
+final dyadic summation in Section~\ref{sec:assembly} proves
+Theorem~\ref{thm:main}.
+
+The constants are chosen for separation of scales. For fixed parameters,
+every use of $o(1)$ is as the minimum-degree parameter tends to infinity.
+No estimate depends on the total order of the target.
+
+\section{Probabilistic and counting preliminaries}\label{sec:preliminaries}
+
+The order and size of a graph are denoted by $v(G)$ and $ e(G)$, and its
+minimum and maximum degrees by $\delta(G)$ and $\Delta(G)$.
+All auxiliary target graphs have at least one edge.
+Entropy formulas use the continuous convention $0\log 0=0$; terms
+with a zero coefficient in $t\log(A/t)$ are likewise zero.
+A component type is an isomorphism class of connected components.
+When candidate images are assigned to vertices of a fixed target, we call
+those target vertices \emph{roles}.
+
+For a set of host edges, its \emph{target capacity} is the maximum number
+of its edges that can be used by a copy of the full target. Capacities are
+subadditive. A set of $h $ host vertices meets at most $\Delta(G)h$ edges
+of a target copy. If every target set of order $h $ spans at most $\sigma h$
+edges, a host-edge set supported on $h$ vertices has capacity at most
+$\sigma h$. We use these deterministic bounds when accounting for blue edges.
+
+We use the asymmetric Lov\'asz local lemma in the following variable form.
+Suppose events $A_i$ are determined by subsets of a finite family of
+independent variables. Join two events when their variable sets intersect.
+If $0<x_i<1$ and
+\[
+ \Pr(A_i)\le x_i\prod_{j\sim i}(1-x_j),
+\]
+then there is positive probability that no $A_i$ occurs.
+The original local lemma is due to Erd\H{o}s and Lov\'asz~\cite{EL}.
+
+\begin{lemma}[Conditional local lemma]\label{lem:conditional-lll}
+Under these hypotheses, if an event $B $ is determined by a variable set $ S$,
+then
+\[
+ \Pr\left(B\,\middle|\,\bigcap_i A_i^c\right)
+ \le \Pr(B)\prod_{i:\,S\cap S_i\ne\varnothing}(1-x_i)^{-1}.
+\]
+In particular, if every variable occurs in events of total weight at most
+$q\le 1/2$, a condition on $ u$ variables incurs a factor at most
+$\exp(2qu)$.
+\end{lemma}
+\begin{proof}
+The usual induction proving the asymmetric local lemma also gives
+$\Pr(A_i\mid\bigcap_{j\in J}A_j^c)\le x_i $ for any set $ J $ excluding $ i$.
+The event $B$ is independent of the joint family whose variable sets avoid
+$S$. Condition first on their avoidance. Dividing by the conditional
+probability of avoiding the remaining events gives the displayed product.
+Finally, $-\log(1-x_i)\le2x_i $ when $ x_i\le1/2$, and the sum of the weights
+of events touching $S $ is at most $ qu$.
+\end{proof}
+
+\begin{lemma}[A read bound]\label{lem:read-bound}
+Let $X_1,\ldots,X_N$ be indicators determined by independent variables,
+with each variable affecting at most $r$ indicators. If
+$\mu=\sum_i\mathbb E X_i$, then
+\[
+ \Pr\left(\sum_iX_i\le\frac\mu2\right)
+ \le\exp\left(-\frac\mu{8r}\right).
+\]
+\end{lemma}
+\begin{proof}
+Product H\"older gives
+$\mathbb E\prod_i g_i\le\prod_i(\mathbb E g_i^r)^{1/r}$ for nonnegative
+functions with this dependence structure. One proves it by integrating
+each independent variable and applying H\"older to the at most $r$ factors
+using that variable. Apply the inequality to $g_i=\exp(-X_i/r)$.
+Markov's inequality bounds the desired probability by
+\[
+ \exp(\mu/(2r))
+ \prod_i\bigl(1-(1-\e^{-1})\mathbb E X_i\bigr)^{1/r}
+ \le \exp\left(-\frac{(1-\e^{-1}-1/2)\mu}{r}\right).
+\]
+Now $1-\e^{-1}-1/2>1/8$. This is a standard read-$ r$ concentration
+estimate; see also~\cite{GLSS}.
+\end{proof}
+
+We use the following form of the classical degree--cover bound; see
+Erd\H{o}s and Faudree~\cite[inequality~(7)]{EF92}.
+
+\begin{lemma}[Degree and cover]\label{lem:degree-cover}
+If $J_0$ is a subgraph of a graph $ J $ with $ e(J_0)>0$, then
+\[
+ \widehat R(J)\ge\frac{\Delta(J)\tau(J_0)}2
+ \ge\frac{\Delta(J)e(J_0)}{2\Delta(J_0)},
+\]
+where $\tau$ is the vertex-cover number.
+\end{lemma}
+\begin{proof}
+In a host with fewer than $\Delta(J)\tau(J_0)/2$ edges, fewer than
+$\tau(J_0)$ vertices have degree at least $\Delta(J)$. Color all edges
+meeting those vertices blue and the remaining edges red. The red graph
+has maximum degree below $\Delta(J)$, and the blue graph has a vertex
+cover too small to contain $J_0$. The second inequality follows because
+a vertex cover of $J_0$ meets at most $\Delta(J_0)$ edges per vertex.
+\end{proof}
+
+\begin{lemma}[Restricted-star count]\label{lem:restricted-star}
+Let $P,k,a $ be positive integers. Let a host vertex set $ U $ have order $ k$
+and span at most $Pk $ edges. For some vertices $ v\in U$, designate a pool
+of at most $C_v $ possible neighbors, where $1\le C_v\le P$.
+Suppose $t_v $ selected edges are assigned to $ v$ from that pool, with each
+edge assigned at most once, and put $t=\sum_v t_v\le a$.
+For fixed pools and counts, the number of possible $a$-edge subsets is at most
+\[
+ \binom{Pk}{a-t}\prod_v\binom{C_v}{t_v}.
+\]
+If this number is positive, its logarithm is at most
+\[
+ a\log(Pk/a)+2a-\sum_v t_v\log(P/C_v).
+\]
+Terms with $t_v=0$ contribute zero.
+\end{lemma}
+\begin{proof}
+Choose the assigned edges separately, then the unassigned edges from
+the whole pool. The bound may overcount, which is harmless.
+The binomial estimate and
+$\sum_vt_v\log(t/t_v)\le t\log k$ bound the assigned choices by
+$t\log(\e Pk/t)-\sum_vt_v\log(P/C_v)$.
+Combining this with the unassigned choices costs at most $a\log2$
+beyond $a\log(\e Pk/a)$.
+\end{proof}
+
+\begin{lemma}[Centers for a candidate list]\label{lem:centers}
+Let $D,T>0$, let $ s\ge2$ be an integer, and let $ Y$ be a finite set of
+vertices, each of degree at most $D$ in a graph. Suppose every subset
+of $Y $ of order at most $ s$ has more than
+$T $ common neighbors. If $|Y|>s$ and
+$\vartheta=\log(2D/T)/(s-1)<1$, at least $ T/2$ vertices are adjacent
+to a $(1-\vartheta)$ fraction of $ Y$.
+\end{lemma}
+\begin{proof}
+Put $a_z=|N(z)\cap Y|$. Counting pairs of an $ s $-subset of $ Y$ and a
+common neighbor gives
+\[
+ \sum_z(a_z/|Y|)^s\ge T,
+ \qquad \sum_z a_z/|Y|\le D.
+\]
+The first inequality uses
+$\binom{a_z}{s}/\binom{|Y|}{s}\le(a_z/|Y|)^s$.
+The terms with $a_z<(1-\vartheta)|Y|$ contribute at most
+$D(1-\vartheta)^{s-1}\le T/2$. Each remaining term is at most one.
+\end{proof}
+
+\begin{lemma}[Residual codegrees]\label{lem:codegree}
+Let $q\ge1$ be an integer, $ D>0$, and $\rho\ge0$. Let a graph of
+maximum degree at most $D$ contain no two disjoint
+$q $-sets of cross density at least $\rho $. If $ T'\ge2q$ and
+$(T'-q)/D>\rho $, the graph joining pairs of codegree greater than $ T'$
+has maximum degree below $q$.
+\end{lemma}
+\begin{proof}
+If $x $ has $ q $ such partners, remove those partners from $ N(x)$.
+Each partner still has more than $T'-q$ neighbors in the remaining
+set, which has order at most $D $. Averaging a $ q$-subset there gives
+the forbidden rectangle. Indeed each partner has more than
+$T'-q\ge q$ neighbors remaining, so there are enough vertices for
+this averaging step. For a bipartite graph with the partners on one
+side and their neighbors on the other, no removal is needed, and
+$T'/D>\rho$ suffices.
+\end{proof}
+
+\section{Reduction to polynomial maximum degree}\label{sec:reductions}
+
+The reduction in this section is uniform in the number of vertices and in
+the number of degree scales. We use the fixed exponent $A=210$; its size
+is only a convenience for the normalization below.
+
+\subsection{Dyadic decomposition}
+
+\begin{proposition}\label{prop:two-classes}
+To prove Theorem~\ref{thm:main}, it suffices to establish the following
+two statements for every fixed $M\ge1$ and all sufficiently large integers
+$q$:
+\begin{enumerate}
+\item every graph of minimum degree at least $q/2^{16}$ and maximum
+degree at most $q^{210}$ has size Ramsey number greater than $ Mq$ times
+its number of edges;
+\item the same conclusion, with a non-strict inequality allowed, holds
+for bipartite graphs whose nonisolated vertices have degree at least
+$q/2^{16}$, whose right degrees are at most $2q$, and whose left degrees
+exceed $q^{210}/8$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+First consider a graph $G $ of minimum degree at least $ d$. Orient every
+edge from the endpoint of larger degree to the endpoint of smaller degree,
+breaking ties by a fixed order. Randomly label vertices left or right and
+retain edges directed from left to right. Some labeling retains at least
+$e(G)/4$ edges. Partition the right vertices by their original degrees in
+dyadic intervals $[q,2q)$. In a band, every left endpoint has original degree
+at least $q $. Repeatedly delete a vertex of current degree below $ q/128$.
+At a left vertex the total loss over the bands is at most
+$\sum_{q\le\deg_G(v)}q/128\le\deg_G(v)/64$; a right vertex occurs in one
+band only. Thus the total retained edge mass is at least $13e(G)/64$.
+
+In each band split the left vertices at current degree $q^{210}$. In
+each of the resulting two graphs, peel a left vertex below one eighth
+of its degree before the split, or a right vertex below $q/2^{16}$.
+The left loss is at most one eighth of the band's edges. Since the right
+order before splitting is at most $128e_q/q$, the right loss in the two
+graphs is at most $e_q/256$. Consequently the final pieces have total
+edge mass at least $21e(G)/128$. The low pieces satisfy the first
+description and the high pieces satisfy the second. Every active scale
+has $q>d/2$.
+
+Let $R=\widehat R(G)$. A Ramsey host for $ G$ is a Ramsey host for each
+piece. If both assertions hold with multiplier $M_1=128M$, then the
+combined edge mass at scale $q $ is at most $2R/(M_1q)$. The reciprocal
+dyadic sum over $q>d/2$ is at most $4/d$. Hence
+\[
+ \frac{21}{128}e(G)\le \frac{8R}{M_1d},
+\]
+which implies $R>Md\,e(G)$. This proves uniform superlinear growth in
+the minimum degree.
+
+For a graph with $e(G)\ge C v(G)$, peel vertices below $ C/2$.
+At least $e(G)/2$ edges remain, with minimum degree at least $ C/2$.
+Applying the preceding result and monotonicity proves the required
+fixed-multiplier assertion. Its equivalence with the real-valued
+formulation in Theorem~\ref{thm:main} is recorded explicitly in the final
+section.
+\end{proof}
+
+\subsection{Normalization of the high-degree pieces}
+
+\begin{proposition}\label{prop:semiregular}
+Suppose $q $ is sufficiently large, $ G$ is a bipartite graph with positive
+edge count, its right degrees are at most $2q$, its nonisolated degrees
+are at least $q/2^{16}$, and every nonisolated left degree is at least
+$q^{209}$. If
+\[
+ \widehat R(G)\le \Lambda e(G),\qquad 1\le\Lambda\le q^2,
+\]
+then $G $ contains an incidence subgraph $ F$ with exact right degree
+$t=\lfloor q/2^{20}\rfloor $, positive edge count, and a number $ p\ge q^{209}$
+such that
+\[
+ \frac p{2^{27}}\le\deg_F(x)\le5\Lambda p\quad(x\text{ on the left}),
+ \qquad e(G)\le2^{26}e(F).
+\]
+\end{proposition}
+\begin{proof}
+Choose an edge-weighted median $p$ of the left degrees, so that left
+vertices of degree at most $p $ and those of degree at least $ p$ each
+meet at least half the edges. The first group gives a subgraph with at
+least $e(G)/2$ edges and maximum degree at most $ p$. The degree-cover
+bound, Lemma~\ref{lem:degree-cover}, applied to this subgraph gives
+$\Delta(G)\le4\Lambda p$.
+
+Retain the edges at left vertices of degree at least $p$. Peel left
+vertices below $p/8$ and right vertices below $ q/2^{19}$. The left loss
+is at most $e(G)/8$: the number of initially retained left vertices is
+at most $e(G)/p $. The right loss is also at most $ e(G)/8$, since the
+original nonisolated right order is at most $2^{16}e(G)/q$. At least
+$e(G)/4$ edges remain.
+
+At each surviving right vertex independently choose exactly $t$ neighbors.
+For large $q $, $ t\ge q/2^{21}$, so each left degree has expectation at least
+$p/2^{25}$. Its probability of falling below half this expectation is
+at most $\exp(-p/2^{28})$. Such an event shares variables with at most
+$8q^3p $ other left events, using $\Lambda\le q^2$ and the original right
+degree bound. Since $p\ge q^{209}$, the symmetric local lemma applies
+uniformly for all $p$ in this range. The selected graph has left degree
+at least $p/2^{27}$ and at most $5\Lambda p$. Selection retains at least
+a $2^{-22}$ fraction of the last edge count; the stated weaker loss
+$2^{26}$ follows.
+\end{proof}
+
+\begin{corollary}\label{lem:regularization}
+In Proposition~\ref{prop:two-classes}, the high-degree assertion follows
+from uniform superlinear growth for incidence graphs of exact right
+degree $d $ whose left degrees lie in $[P,d^4P]$, with $ P\ge d^{200}$.
+\end{corollary}
+\begin{proof}
+If the high-degree assertion fails at a fixed multiplier $M$, choose
+arbitrarily large $q $ and a Ramsey host with at most $ Mq e(G)$ edges.
+For large $q $, $ Mq\le q^2$ and $ q^{210}/8\ge q^{209}$.
+Apply the proposition with $\Lambda=Mq $, and put $ P=p/2^{27}$.
+For sufficiently large $q$,
+\[
+ P\ge t^{200},\qquad 5Mq p\le t^4P,\qquad q\le2^{21}t.
+\]
+The same host arrows $F $ and has at most $2^{47}Mt\,e(F)$ edges,
+contradicting the asserted uniform bound at degree $t\to\infty$.
+\end{proof}
+
+\subsection{A dictionary for large-right incidence blocks}
+
+\begin{proposition}\label{prop:dictionary}
+Let $q\ge2^{32}$ be an integer. Let $ F$ be a vertex-disjoint union of
+incidence graphs $F_i $, with parts $ A_i,B_i$, satisfying
+\[
+ |A_i|\le q^{20},\qquad |B_i|\ge128q^{69},\qquad
+ \deg_{F_i}(y)=q\quad(y\in B_i).
+\]
+There is no restriction on the number or diversity of these blocks.
+Then
+\[
+ \widehat R(F)>\frac7{16}q^{49}e(F).
+\]
+Adding isolated vertices to the target does not affect this lower bound.
+\end{proposition}
+\begin{proof}
+Put
+\[
+ a=q^{20},\quad \Gamma=q^{50},\quad D=8\Gamma,\quad
+ M=(a+1)^q,\quad R=16M\Gamma D,\quad K=(R+1)^a+1,
+\]
+and let $\ell=\lceil2^{q/16}\rceil $, $ s=\lfloor q/2\rfloor $, and $ J=q^{43}$.
+Fix an arbitrary host $H $. Write $ Y=\{v:\deg_H(v)\le D\}$.
+On the vertices of degree greater than $D $, form a graph $ Q$ by joining
+distinct $x,z$ when
+\[
+ \max\{\deg_H(x),\deg_H(z)\}
+ \le16M\Gamma\,|N_H(x)\cap N_H(z)\cap Y|.
+\]
+Summing codegrees at $x $ gives $\Delta(Q)\le R$. Color the graph joining
+vertices at $Q $-distance at most $ a $ with $ K$ labels. Such a coloring
+exists because its maximum degree is below $K$. Its labels are injective
+on every connected set of at most $a $ vertices in $ Q$.
+
+\medskip\noindent\emph{Dictionary tests.}
+In a target block, remove the left vertices of target degree at most $D$,
+and write $T_y$ for a right vertex's remaining neighborhood. Let
+$B_* =\{y:|T_y|\ge s\}$. We will test all partial injective label maps on
+$A_i $: a map to the $ K$ labels, with a further value meaning ``undefined.''
+For each map retain exactly the rows of $B_*$ on which every label is
+defined. There are at most $(K+1)^a$ tests per block. This includes the
+restriction of every injective labeling of any selected left subset.
+
+Give each label an independent uniform binary word of length $\ell$.
+For a test on a row set $B'$, call a coordinate bad when more than
+$|B'|/(4\ell)$ rows have constant sign on their label sets at that
+coordinate. A row uses at least $s$ distinct labels, so Markov's
+inequality bounds the probability of a bad coordinate by
+$4\ell\,2^{1-s}$. Independence between coordinates and a union bound give
+\[
+ \Pr(\text{at least }J\text{ bad coordinates})
+ \le (8\ell^2 2^{-s})^J.
+\]
+The parameters above satisfy
+\[
+ \log((K+1)^a)\le131q^{42},\qquad
+ 8\ell^2 2^{-s}\le \exp(-q/8),
+ \qquad (K+1)^a\exp(-qJ/8)\le\tfrac18.
+\]
+For completeness, $\log(q^{20}+1)\le1+20q$ gives
+$\log R\le128q^2$, $\log(R+1)\le129q^2$, and
+$\log(K+1)\le131q^{22}$. Also $\ell\le2\cdot2^{q/16}$ and
+$s\ge(q-1)/2$, so the logarithm of the middle expression is at most
+$11\log2/2-3q\log2/8\le-q/8$. Finally
+$131q^{42}-q^{44}/8\le-3\log2$ for $ q\ge65536$.
+Call a block good when every test has fewer than $J$ bad coordinates.
+Weighted expectation, with weight $|B_i|$, supplies one dictionary
+for which good blocks carry at least $7/8$ of the total right order.
+For each test, at most $|B'|/4$ rows are uniform at one or more good
+coordinates, by summing the defining bound over at most $\ell$ coordinates.
+
+\medskip\noindent\emph{One assignment of coordinates to host rows.}
+Independently give every vertex of $Y$ a uniform coordinate. For every
+nonempty $Q $-connected set $ W $ of order at most $ a$, put
+$R_W=Y\cap\bigcup_{x\in W}N_H(x)$. Consider every dyadic scale $ B=2^j$
+satisfying
+\[
+ 8aD\le qB,\qquad B\le8M\deg_H(x),\qquad
+ \deg_H(x)<2\Gamma B\quad(x\in W).
+\]
+For every set $S $ of at most $ J$ coordinates, forbid the event that at
+least $\lceil B/(8a)\rceil $ vertices of $ R_W $ receive a coordinate in $ S$.
+Since $|R_W|\le2a\Gamma B$, the binomial tail is at most
+\[
+ (16\e a^2\Gamma J/\ell)^{\lceil B/(8a)\rceil}
+ \le\exp\bigl(-qB/(512a)\bigr).
+\]
+A host row is in the support of at most
+\[
+ N_0=D(a+1)R^{2a}(16M\Gamma)(J+1)\ell^J
+\]
+events. Indeed, root a connected set at a neighbor of that row and
+encode it by a walk of length at most $2a $; there are at most $ a+1$
+possible orders. The admissible scales have multiplicative range
+less than $16M\Gamma$, hence number at most that quantity. Finally,
+the number of coordinate subsets is at most $(J+1)\ell^J$.
+
+Give a scale-$B $ event weight $ x_B=\exp(-qB/(1024a))$. The concrete
+parameters satisfy
+\[
+ \log N_0\le q^{46},\qquad
+ N_0\exp(-D/128)\le\eta:=\frac{q}{8192a^2\Gamma}.
+\]
+These estimates use only $q\ge2^{32}$; the exponential term
+$D/128=q^{50}/16$ dominates $ q^{46}$ and the logarithm of $1/\eta$.
+Every event weight is at most $1/2$, and the total event weight at
+any one variable is at most $\eta$. Its dependency product is therefore
+at least
+\[
+ \exp(-2\eta |R_W|)\ge\exp(-4\eta a\Gamma B)\ge x_B.
+\]
+The event probability is at most $x_B^2$. The asymmetric local lemma
+gives an assignment avoiding all these events simultaneously.
+
+\medskip\noindent\emph{Exclude a cheap monochromatic block.}
+Color an edge between a host vertex of degree greater than $D$ and a
+vertex of $Y$ by the former's label word at the latter's assigned
+coordinate. Color all other edges arbitrarily. Fix a good target block
+and suppose it has a monochromatic copy of degree charge at most
+$\Gamma b $, where $ b=|B_i|$ and degree charge means the sum of host
+degrees over all vertices of the copy.
+
+Deleting low-degree target left vertices loses at most $aD\le qb/16$
+edges, so $|B_*|\ge7b/8$. There are at most $ M $ patterns $ T_y$:
+encode a set of at most $q $ elements of $ A_i $ by a $ q$-tuple with an
+extra padding symbol. Patterns occurring fewer than $b/(8M)$ times
+contain at most $b/8$ rows. Patterns in which fewer than half the rows
+have low host images contain at most twice the number of high right
+images, hence at most $b/4$ rows. There are at most $ b/8$ high right
+images. After these deletions, at least $3b/8$ low rows survive.
+
+Turn every surviving pattern into a clique on the target left side.
+Every pair in such a pattern has at least $b/(16M)$ common low host
+neighbors. Since individual image degrees are at most $\Gamma b$, it
+maps to an edge of $Q$. Thus each target component maps to a connected
+set with injective host labels. For a component $U $, let $ B_U$ consist
+of all rows of $B_*$ whose pattern lies in $ U$. These row sets are
+disjoint, and every surviving row belongs to one of them. Their total
+order is at most $b$.
+
+At most $b/4$ surviving rows can use a good coordinate. Therefore at
+least $b/8$ use bad coordinates, and some component $ U$ supplies at
+least $b/(8a)$ such rows. Every vertex of this component belongs to a
+surviving pattern, and hence has degree at least $b/(8M)$. Its host
+image $W $ has all degrees between $ b/(8M)$ and $\Gamma b$.
+Taking $B=2^{\lfloor\log_2b\rfloor}$ gives an admissible scale: the
+condition $8aD\le qB $ follows from $ b\ge128q^{69}$.
+The bad-coordinate set for $B_U $ has fewer than $ J$ elements. The
+selected low row images are distinct members of $R_W$, and at least
+$\lceil B/(8a)\rceil$ receive one of these coordinates. This contradicts
+the assignment.
+
+Each monochromatic copy of the full target therefore gives disjoint
+good-block images, each with degree charge greater than $\Gamma|B_i|$.
+Their aggregate charge is greater than $7\Gamma\sum_i|B_i|/8$.
+Since the total host degree sum is $2e(H)$ and
+$e(F)=q\sum_i|B_i|$, a host of at most $7q^{49}e(F)/16$ edges cannot
+contain such a copy. This proves the proposition.
+\end{proof}
+
+\subsection{Strongly unbalanced targets}
+
+\begin{proposition}\label{prop:unbalanced}
+For every fixed $M\ge1$ and all sufficiently large integers $ d $, let $ G$
+be an incidence graph of positive order and exact right degree $d$.
+If its left degrees lie in $[P,d^4P]$ with $ P\ge d^{200}$, then
+\[
+ \widehat R(G)>Md\,e(G).
+\]
+The assertion is uniform in $P$, the order, and the component structure.
+\end{proposition}
+\begin{proof}
+Write $a,b $ for the side orders, put $ W=P/d^{12}$, and call a left
+pair heavy when its codegree is at least $W$. The heavy-pair graph has
+maximum degree at most $d^{17}$. Call a right row concentrated when
+at least $q=\lfloor d/4\rfloor$ of its neighbors lie in some closed
+heavy-pair neighborhood.
+
+\medskip\noindent\emph{Many concentrated rows.}
+Suppose more than half the rows are concentrated. Assign each such row
+to a witnessing center. Color the square of the heavy-pair graph and
+keep one center color. Distinct retained centers have disjoint closed
+neighborhoods. Retain exactly $q$ neighbors inside the assigned ball
+at each row. Delete a center fiber if it has fewer than $128q^{69}$
+rows. There are at most $a\le db/P$ centers, so this last deletion costs
+at most $128q^{69}db/P $ rows. For $ d\ge2^{32}$ this is smaller than the
+fixed fraction retained in the square-coloring step. The elementary
+counts, including $q\ge d/5$, give a subgraph $ F$ with
+\[
+ e(G)\le128d^{34}e(F),\qquad |A_i|\le q^{20},\qquad
+ |B_i|\ge128q^{69}.
+\]
+The ball-size bound follows from $1+d^{17}\le q^{20}$ for these $ d$.
+Proposition~\ref{prop:dictionary} and monotonicity give
+\[
+ \widehat R(G)>\frac{7q^{49}}{2048d^{34}}e(G)>Md\,e(G)
+\]
+for sufficiently large $d $ depending on $ M$.
+
+\medskip\noindent\emph{At least half the rows are not concentrated.}
+Their neighborhoods contribute ordered light-pair codegree mass at least
+$aPd/4$. Let $\rho=d^{-6}$, and, for a proposed host with at most
+$Md\,e(G)$ edges, set
+\[
+ D_L=\lceil16Md^5P\rceil,\qquad D_R=\lceil16Md^2\rceil.
+\]
+Use high host vertices of degree in $[P,D_L]$ and nonisolated low host
+vertices of degree at most $D_R $. These sets are disjoint for large $ d$.
+They satisfy $D_R^2\le1024d^5$ and $ D_LD_R\le1024d^8P $ once $ M^2\le d$.
+
+Partition light pairs by their positive integer codegrees into dyadic
+bands, starting from a power of two in $[W,2W]$. The associated host
+pair graph at band $j $ has maximum degree at most $ D_j=D_0 2^j$, where
+$2\le D_0\le4096d^{20}$. If every target band had fewer than
+$32a\rho^{-1}\log D_j$ edges, summing their codegree contributions
+would give $O(aP d^{-6}\log d)$, contradicting $ aPd/4$.
+Thus one band has a connected component $T $ with $ k $ vertices and $ f$
+edges such that
+\[
+ k\ge d,\qquad \rho f\ge32k\log D_j.
+\]
+
+Mark each host pair independently with probability $\rho$. For every
+copy of $T$ in the host pair graph, forbid the event that all its edges
+are unmarked. Give this event weight $\exp(-\rho f/2)$.
+The number of copies using a fixed pair is at most $k^2D_j^{k-2}$,
+so the total event weight at a pair is at most $d^{-13}$.
+Because $4d^{-13}\le\rho$, the asymmetric local lemma applies.
+Moreover, conditioning on the avoidance of all these events multiplies
+the probability of any event determined by $s$ pair variables by at
+most $\exp(2d^{-13}s)$.
+
+At a low host row there are at most $D_R^2\le1024d^5$ relevant pair
+variables. The binomial upper tail and the preceding correction bound
+show that the conditional probability of at least $d/4$ marked pairs
+is at most $2d^{-8}$. Select an avoiding outcome for which the number
+of such bad host rows is at most $2d^{-8}$ times the low host order.
+That order is at most twice the host edge count, so the bad row count
+is at most $e(G)/(8d)$ for large $ d$.
+
+Color a high-low edge blue when its high endpoint belongs to a marked
+pair in the neighborhood of its low endpoint, and color the remaining
+high-low edges red. All other host edges are blue. A red copy of $G$
+must have its left images high and its right images low, since $P>D_R$.
+The selected target pair component then gives an entirely unmarked
+copy of $T$, a contradiction.
+
+In a blue copy, the target edge mass at left images of degree above
+$D_L $ is at most $ e(G)/8$, by the host degree sum and the target left
+degree bound $d^4P $. Right images above $ D_R $ cost at most $ e(G)/8$,
+and bad low right images cost at most $e(G)/8$. Every remaining right
+image meets fewer than $d/4$ marked pairs and therefore fewer than
+$d/2$ blue high-low edges. These account for at most $ e(G)/2$ edges.
+The total is below $e(G)$, a contradiction. This completes both cases.
+\end{proof}
+
+\subsection{The polynomial-degree reduction}
+
+\begin{proposition}\label{prop:polynomial}
+To prove Theorem~\ref{thm:main}, it remains to prove that, for every fixed
+$B,M\ge1$, all sufficiently large $ d $ and all positive-order graphs $ G$
+with $\delta(G)\ge d $ and $\Delta(G)\le d^B$ satisfy
+$\widehat R(G)>Md\,e(G)$.
+\end{proposition}
+\begin{proof}
+The low pieces of Proposition~\ref{prop:two-classes} have polynomial
+maximum degree after rescaling their minimum degree by the fixed factor
+$2^{16}$. Its high pieces are covered by Corollary~\ref{lem:regularization}
+and Proposition~\ref{prop:unbalanced}. The dyadic edge-mass argument
+therefore gives the full minimum-degree assertion and then the original
+density statement. The converse implication is immediate from the
+handshake lemma, so no restricted family is being substituted for the
+original target.
+\end{proof}
+
+
+\section{Logarithmic local density}\label{sec:local}
+
+\subsection{Relative-degree dense balls}
+
+\begin{lemma}\label{lem:relative-ball}
+
+Let $F $ be connected, of minimum degree at least $ d $, maximum degree at most $\Delta $, and order at most $ K $. Put $ w(v)=\deg_F(v)$ and $ w(U)=\sum_{v\in U}w(v)$. Every subgraph retaining at least $3e(F)/4$ edges contains a connected vertex set $ U $ spanning at least $ w(U)/16$ retained edges. One may take $|U|\ge d/8+1$ and $\operatorname{diam}(F[U])\le 2\lceil\log_{9/8}(K\Delta)\rceil$.
+
+\end{lemma}
+
+\begin{proof}
+
+For a target component $F $, put $ w(v)=\deg_F(v)$, and $ w(U)=\sum_{v\in U}w(v)$. Suppose a residual subgraph of $ F $ retains at least $3e(F)/4$ edges. Peel vertices whose current degree is below $ w(v)/4$. The total peeled edge count is at most $\sum_v w(v)/4=e(F)/2$, so a nonempty core remains with current degree at least $ w(v)/4$ at every vertex.
+
+In that core, a ball $U $ spanning fewer than $ w(U)/16$ residual edges has at least $ w(U)/8$ outgoing edges. Every outside endpoint contributes original weight at least its number of incident outgoing edges from the ball. Thus the next ball has weight at least $9w(U)/8$. Total weight is at most $ K\Delta $, so some ball of radius at most $\lceil\log_{9/8}(K\Delta)\rceil $ spans at least $ w(U)/16$ residual edges. It has diameter at most
+
+\begin{equation}
+r=2\lceil\log_{9/8}(K\Delta)\rceil\le 12\log_2(K\Delta)+2
+\end{equation}
+
+and order $u\ge d/8+1$ by simplicity, because $ w(U)\ge du$.
+
+\end{proof}
+
+\subsection{A palette with few repeated labels}
+
+\begin{lemma}\label{lem:collision-palette}
+
+Let $J $ have maximum degree at most $ D\ge2$, let $ K\ge1$, and let $0<\varepsilon<1$. There is a labeling with at most $ P=(D^2+1)\lceil K(D+1)^{12/\varepsilon}\rceil $ labels such that every connected $ u $-vertex set, $ u\le K $, has at most $2\varepsilon u$ vertices whose label repeats in that set. If two edges in the set have the same unordered label pair, both endpoint labels repeat in the set.
+
+\end{lemma}
+
+\begin{proof}
+
+Let $J $ have maximum degree at most $ D $, where $ D\ge2$. Fix an integer $ K\ge1$ and $0<\varepsilon<1$. Independently give its vertices random labels from a palette of size
+
+\begin{equation}
+P_0=\left\lceil K(D+1)^{12/\varepsilon}\right\rceil .
+\end{equation}
+
+For a connected set of order $u\le K $, expose the labels in any fixed order. The probability that there are more than $\varepsilon u$ collisions with previous labels is at most
+
+\begin{equation}
+2^u (K/P_0)^{\varepsilon u}\le (D+1)^{-10u}.
+\end{equation}
+
+Indeed for any fixed positions of the collisions the conditional probability at each specified position is at most $u/P_0$. A connected set of order $ t $ through a specified vertex can be encoded by a spanning-tree walk of length $2(t-1)$, so there are at most $ D^{2(t-1)}$ such sets. Give a collision event on $ u $ vertices local-lemma weight $(D+1)^{-4u}$. The sum of event weights through any vertex is at most $\sum_{t\ge1}(D+1)^{-2t}\le1/8$. Events on disjoint sets are independent. The dependency product for a size-$ u $ event is at least $\exp(-u/4)$ and the local lemma applies.
+
+Fix the resulting labeling and append a proper color of $J^2$ using at most $ D^2+1$ colors. The full palette has size $ P=P_0(D^2+1)$. In every connected set of order $ u\le K $, at most $2\varepsilon u$ vertices have a full label occurring more than once in that set. Moreover, if two distinct edges in the set have the same unordered pair of full labels, both endpoint labels occur more than once there. Otherwise the edges would share the uniquely labeled endpoint and their other endpoints would have the same full label at distance two, which is impossible.
+
+\end{proof}
+
+\subsection{The palette obstruction}
+\begin{lemma}\label{lem:palette-obstruction}
+Let $F $ have minimum degree at least $ q\ge128$, maximum degree at most
+$\Delta $, and component orders at most $ K$. Suppose each vertex set of
+order at most $K $ spans at most $\tau$ times its order edges, where
+$\tau\ge q/2$. For $\Lambda\ge1$, set
+\[
+ D=\lceil128\Lambda\Delta\rceil,\qquad
+ \varepsilon=q/(256\tau),\qquad p=256\log D/q,
+\]
+and $P=(D^2+1)\lceil K(D+1)^{12/\varepsilon}\rceil$.
+Put $\ell=\log(1/(16\e p))$. If $\ell>0$,
+\[
+ \log P+2\log\Delta\le q\ell/64,
+ \qquad K\sum_{u\ge\lceil q/8\rceil}\exp(-q\ell u/64)<1/1000,
+\]
+then $\widehat R(F)>\Lambda e(F)$.
+\end{lemma}
+\begin{proof}
+Suppose a host $H $ with $ m\le\Lambda e(F)$ arrows $ F$.
+Delete host vertices of degree above $D$, provisionally coloring their
+incident edges blue. A target image uses at most $e(F)/64$ such edges.
+Apply Lemma~\ref{lem:collision-palette} to the retained graph and color
+each unordered pair of distinct labels blue independently with probability
+$p$. Give the host edges their label-pair colors.
+
+For a component $F_i $, put $ w(v)=\deg_{F_i}(v)$. On a connected target
+set $U $ of order $ u$, deleting edges whose two endpoint labels repeat
+costs at most $2\tau\varepsilon u=qu/128\le w(U)/128$ edges.
+All remaining image edges have distinct label pairs. Thus a set with
+$w(U)/16$ blue target edges has at least $ w(U)/32$ blue edges on
+distinct label pairs. For a fixed label map there are at most $w(U)/2$
+such pairs, so the probability of this event is at most
+\[
+ (16\e p)^{\lceil w(U)/32\rceil}\le\exp(-q\ell u/32).
+\]
+There are at most $v(F_i)\Delta^{2u}$ connected $ u $-sets and $ P^u$
+label maps. The hypotheses therefore make the probability that $F_i$
+admits any such set of order $u\ge q/8$ less than $1/1000$.
+The expected edge mass of these exceptional components is less than
+$e(F)/1000$.
+
+Choose a relative-degree dense ball in one fixed component, using
+Lemma~\ref{lem:relative-ball}. If it has order $u_0$, it contains
+at least $qu_0/16$ edges, of which at least $ qu_0/32$ have distinct
+label pairs in any retained-host image. Its red probability is at most
+$\exp(-pqu_0/32)=D^{-8u_0}$. An edge belongs to at most
+$u_0^2D^{u_0-2}$ embeddings of this fixed connected graph.
+Since $u_0\ge q/8\ge16$ and $\Lambda\le D$, the expected number of
+host edges in red copies of the ball is less than $e(F)/1000$.
+
+Markov's inequality gives a palette for which the latter support has
+at most $e(F)/64$ edges and the exceptional component mass is at most
+$e(F)/4$. Recolor the support blue. Red $ F$ is impossible. A blue
+image of $F$, after removing the two provisionally recolored parts,
+loses at most $e(F)/32$ edges. Some nonexceptional component retains
+at least three quarters of its edges. Its relative-degree dense ball
+would give an exceptional label map, a contradiction.
+\end{proof}
+
+\subsection{A quantitative bounded-component estimate}
+
+\begin{proposition}\label{prop:bounded-components}
+
+Put $B=2^{48}$. Let $ d,\Delta,K $ be positive integers with $ d\le\Delta $, let $\Lambda\ge1$, and set $ T=1+\log(128\Lambda\Delta)$. If
+
+\begin{equation}
+d\ge \exp(1)BT,\qquad \log K\le\frac{d}{8192}\log\frac{d}{BT},
+\end{equation}
+
+then every graph of minimum degree at least $d $, maximum degree at most $\Delta $, and component orders at most $ K $ satisfies $\widehat R(G)>\Lambda e(G)$.
+
+\end{proposition}
+
+\begin{proof}
+
+Fix $\Delta,K $ and induct downward on $d $, with all eligible $\Lambda $ quantified at each step. Write $ e=e(G)$, and take a host with $ m\le\Lambda e $. Greedily remove minimum-degree-$ s $ subgraphs on at most $ K $ vertices, where $ s=16d $, by peeling sets of at most $ K $ vertices with at least $ s $ times their order edges. Let $ W $ be their disjoint union. If the removal costs at least $ e/4$ edges, then $ e(W)\ge se/(8\Delta)$, by charging deleted edges to vertices of $ W $. This case implies $ s\le\Delta $. Set $\Lambda_1=8\Delta\Lambda/s$. Then
+
+\begin{equation}
+m\le\Lambda_1 e(W),\qquad
+1+\ln(128\Lambda_1\Delta)\le2T.
+\end{equation}
+
+Both parameter conditions hold at degree $s $ and multiplier $\Lambda_1$, since $ s=16d $. The induction hypothesis gives a contradiction. If $ s>\Delta$, this removal branch is impossible, so there is no need for a separate base case.
+
+Otherwise peel the remaining graph to minimum degree $q=\lfloor d/4\rfloor\ge d/5$, losing at most $ e/2$ additional edges. The residual target $ F $ has $ e(F)\ge e/4$, maximum degree at most $\Delta $, component orders at most $ K $, and every set of at most $ K $ vertices spans fewer than $ s $ times its order edges. The host budget is at most $4\Lambda e(F)$. Apply the palette obstruction in Lemma~\ref{lem:palette-obstruction} with $ q $ replacing its minimum-degree parameter, $\tau=s$, and
+
+\begin{equation}
+D=\lceil512\Lambda\Delta\rceil,\qquad
+\varepsilon=\frac{q}{256s}\ge\frac1{20480},\qquad
+p=\frac{256\ln D}{q}.
+\end{equation}
+
+Here $\ln(D+1)\le2T$. As in that proof, the label count satisfies
+
+\begin{equation}
+\ln P+2\ln\Delta\le\ln K+2^{20}T\le \frac{d}{640}\ln\frac{d}{BT}.
+\end{equation}
+
+The first inequality uses $P=(D^2+1)\lceil K(D+1)^{12/\varepsilon}\rceil $. The second follows from the hypotheses and $ B=2^{48}$. Put $\ell=\ln(d/(BT))\ge1$. We have $16\exp(1)p\le BT/d $, so for a connected target set of order $ u\ge q/8$ and any fixed label map, the blue tail is at most $\exp(-qu\ell/32)\le \exp(-du\ell/160)$. The probability of a bad component is at most
+
+\begin{equation}
+K\sum_{u\ge q/8}\exp(-du\ell/320)<1/1000.
+\end{equation}
+
+The displayed palette-size upper bound is stronger than what the last inequality needs. Also, a fixed red dense relative-degree ball on $u_0\ge q/8$ vertices has red probability at most $ D^{-8u_0}$ per embedding, by the same count of distinct label pairs after discarding repeated-label endpoint pairs. The expected red-copy support is at most $ m u_0^2D^{u_0-2}D^{-8u_0}<e(F)/1000$, since $ m/e(F)\le4\Lambda\le D$. The alteration and blue contradiction from the sparse-collision palette proof now apply without change. This closes the induction.
+
+\end{proof}
+
+\subsection{Local sparsity reduction}
+
+\begin{proposition}\label{prop:local-sparsity}
+
+Fix $A,B,M\ge1$. Suppose $ G $ has minimum degree at least $ d $, maximum degree at most $ d^B $, and a host of at most $ Md\,e(G)$ edges. For sufficiently large $ d $ there is a subgraph $ F $ with at least $ e(G)/4$ edges, minimum degree at least $ q=\lfloor d/4\rfloor $, maximum degree at most $ d^B$, and
+
+\begin{equation}
+e_F(U)\le C_{A,B}\log q\,|U|\qquad(|U|\le q^A).
+\end{equation}
+
+The same host has at most $20Mq\,e(F)$ edges. In particular, the polynomial maximum-degree reduction may also impose this local density condition.
+
+\end{proposition}
+
+\begin{proof}
+
+Set $K=\lceil d^{A+1}\rceil $ and $ s=\lceil C\log d\rceil $, where $ C=C(A,B)$ is sufficiently large. Whenever a current vertex set of order at most $ K $ spans at least $ s $ times its order edges, peel that subgraph to a nonempty core of minimum degree at least $ s$. Remove its vertices from the current graph and record the core. The recorded cores are disjoint.
+
+If these removals delete at least $e(G)/4$ edges, their union $ W $ has $ e(W)\ge s e(G)/(8d^B)$, because at least $ e(G)/(4d^B)$ vertices were removed. Apply the quantitative bounded-component estimate with degree parameter $ s $, maximum degree $ d^B $, order bound $ K $, and multiplier $ d^{B+3}$. In that estimate $ T=O_B(\log d)$ and $\log K=O_A(\log d)$. Taking $ C$ sufficiently large verifies both hypotheses. It follows that
+
+\begin{equation}
+\widehat R(G)\ge\widehat R(W)>d^{B+3}e(W)
+\ge \frac{s d^3}{8}e(G)>Md\,e(G),
+\end{equation}
+
+a contradiction for large $d$.
+
+Otherwise at least $3e(G)/4$ edges remain. Peel vertices of current degree below $ q $. Since $ v(G)\le2e(G)/d $, this removes at most $ e(G)/2$ more edges. The resulting $ F $ has at least $ e(G)/4$ edges and inherits the maximum degree bound. Every remaining set of at most $ K $ vertices has fewer than $ s $ times its order edges. Since $ q^A\le K $ and $\log d=O(\log q)$, the claimed density bound follows. Finally $ d\le5q $ and $ e(G)\le4e(F)$.
+
+\end{proof}
+
+\section{Entropy of connected component types}\label{sec:entropy}
+
+\subsection{Counting with a spanning forest}
+
+\begin{lemma}\label{lem:forest}
+
+Let $F $ have $ n $ vertices. Choose a rooted spanning forest of $ F $ with $ k $ rooted components. For each vertex $ u $, let $ s_u $ denote its number of children. Write $ S=\sum_us_u=n-k $ and $ B=\sum_{u:s_u>0}s_u\log_2s_u $. Assume $ S>0$. In a host with $ N $ vertices and $ m $ edges, the number of embeddings of the labeled $ F$ is at most
+
+\begin{equation}
+N^k(2m/S)^S2^B.
+\end{equation}
+
+\end{lemma}
+
+\begin{proof}
+
+Independently choose each root image uniformly in the host. Traverse each rooted tree with parents preceding children, and choose each child image uniformly among the neighbors of the previously chosen parent image. An attempt fails if an isolated parent needs a child. The process permits collisions and ignores nonforest edges, so each true embedding $\phi$ is an outcome of probability
+
+\begin{equation}
+N^{-k}\prod_{u:s_u>0}\deg_H(\phi(u))^{-s_u}.
+\end{equation}
+
+For such an embedding, $\sum_{u:s_u>0}\deg_H(\phi(u))\le 2m $ by injectivity. The weighted arithmetic-geometric mean inequality with weights $ s_u/S$ gives
+
+\begin{equation}
+\prod_{u:s_u>0}\deg_H(\phi(u))^{s_u}
+ \le (2m/S)^S\prod_{u:s_u>0}s_u^{s_u}.
+\end{equation}
+
+Summing the resulting lower bound on the probability of each distinct embedding proves the count.
+
+\end{proof}
+
+\subsection{A biased forest entropy bound}
+
+\begin{proposition}\label{prop:forest-entropy}
+
+Fix constants $A,B\ge1$. Let $ G $ have minimum degree at least $ d $, maximum degree at most $ d^B $, edge count $ e $, and $ r $ connected components. Write $ t_i $ for the multiplicities of its distinct component types and $ w_i=t_i/r $. Use natural logarithms and write $\mathcal H(w)=-\sum_i w_i\ln w_i $. There is a constant $ C_{A,B}$ such that for all sufficiently large $ d$,
+
+\begin{equation}
+r\mathcal H(w)\le e(\ln d-\ln\ln d-C_{A,B})
+ \quad\Longrightarrow\quad
+ \widehat R(G)>d^A e.
+\end{equation}
+
+There is no expansion, order, or component-size regularity assumption. For pairwise nonisomorphic $d $-regular components of one order $ k $, the condition is $\ln r\le (dk/2)(\ln d-\ln\ln d-C_{A,B})$.
+
+\end{proposition}
+
+\begin{proof}
+
+\medskip\noindent\emph{Red avoidance and full blue images.}
+
+Write $\Lambda=d^A $, $\eta=(\ln d)^{-2}$, and $ D=\lceil2\Lambda\Delta(G)/\eta\rceil $. Take any host $ H $ with $ m\le\Lambda e $ edges and delete its vertices of degree above $ D $, leaving $ J $. At most $\eta e$ edges of any full target embedding have an endpoint in the removed set.
+
+Color retained edges independently blue with probability $p=C_0\ln D/d $, for sufficiently large absolute $ C_0$. Fix one target component $ F $ of order $ k_0$ and edge count $ a_0\ge dk_0/2$. Use a red bad event for every embedding of $ F $ in $ J $. Give it local lemma weight $ x=\exp(-pa_0/2)$. A retained edge lies in at most $ k_0^2D^{k_0-2}$ such events by an anchored spanning tree. Hence their weight sum per retained edge is at most $ q=D^{-5d}$ for large $ d $, taking $ C_0$ large enough. The asymmetric local lemma applies since a red event has probability at most $ x^2$ and its dependency product is at least $\exp(-2qa_0)\ge x$.
+
+Condition on all red events being avoided. For any fixed set of $a'$ retained edges, the conditional probability that they are all blue is at most
+
+\begin{equation}
+p^{a'}\exp(2qa').
+\end{equation}
+
+This is the standard conditional local lemma inequality, using the dependency product over red events touching those $a'$ variables. Color every removed host edge blue. A full target embedding into $ H $ has at least $(1-\eta)e $ retained edges, so its probability of being blue under the conditioned coloring is at most $(p\exp(2q))^{(1-\eta)e}$.
+
+\medskip\noindent\emph{Count full embeddings before the deletion.}
+
+Discard original host isolates, which cannot be used by an embedding. Choose a rooted spanning forest of $G $ and put $ n=v(G)$ and $ s=n-r $. By Lemma~\ref{lem:forest}, the number of distinct target edge-image sets in $ H$ is at most
+
+\begin{equation}
+\frac{(2m)^r(2m/s)^s\,\Delta(G)^s}{\prod_i t_i!}.
+\end{equation}
+
+Each edge-image set has at least $\prod_i t_i!$ embeddings by permuting identical components. Counting in $ H $ instead of $ J $ keeps the original spanning forest and its $ r$ roots. There is no need to count the extra connected fragments produced by the deletion.
+
+The logarithm of this expression is at most
+
+\begin{equation}
+r\mathcal H(w)+r\ln(2\exp(1)m/r)+s\ln(2m/s)+s\ln\Delta(G)
+ =r\mathcal H(w)+O_{A,B}(e\ln d/d).
+\end{equation}
+
+For the estimate, $n\le2e/d $ and $ r\le n/(d+1)$ by minimum degree. The map $ x\mapsto x\ln(2\exp(1)\Lambda e/x)$ is increasing on $[0,2e/d]$. Bounding both the root and nonroot terms at $2e/d $ gives the stated estimate, and $ s\ln\Delta(G)=O_B(e\ln d/d)$.
+
+Since $D $ is polynomial in $ d $, $\ln(1/p)\ge\ln d-\ln\ln d-O_{A,B}(1)$. The logarithm of the expected number of full blue target edge-image sets in the conditioned coloring is therefore at most
+
+\begin{equation}
+r\mathcal H(w)+O_{A,B}(e\ln d/d)
+ -(1-\eta)e\bigl(\ln(1/p)-2q\bigr)<0
+\end{equation}
+
+under the stated condition with sufficiently large $C_{A,B}$. There is an outcome with no blue target. There is also no red target, because all its red edges would be retained and the fixed component $ F$ is absent in red.
+
+\end{proof}
+
+\subsection{Low-entropy classes have small total mass}
+
+\begin{lemma}\label{lem:class-mass}
+
+Fix $M,B\ge1$ and $ L>1$. Suppose $ G $ has minimum degree at least $ d $, maximum degree at most $ d^B $, and a host of at most $ Md\,e(G)$ edges. For some $ K_0=K_0(L,B)$, select in each order-and-edge-count class $(k,a)$ any collection of at most
+
+\begin{equation}
+\exp\bigl(a(\log d-\log\log d-K_0)\bigr)
+\end{equation}
+
+distinct component types. The union of all their occurrences in $G $ has fewer than $ Md^{1-L}e(G)$ edges.
+
+\end{lemma}
+
+\begin{proof}
+
+Let $W $ be the unionof these selected components. The entropy of its component types splits into the entropy of the class and the conditional type entropy inside the class. The conditional term, multiplied by the number of components, is at most $ e(W)(\ln d-\ln\ln d-K)$. The class term is only $ O(e(W)/d)$. For example use a probability distribution on possible classes assigning mass $2^{-k}$ to order $ k $ and dividing that mass uniformly across integers $0\le a\le \lfloor\Delta k/2\rfloor $. Cross entropy bounds the class entropy by the mean of $ k\ln2+\ln(1+\Delta k)$ over components. Its sum is $ O(v(W))$ because each order is at least $ d+1$ and $\Delta $ is polynomial in $ d $. Apply Proposition~\ref{prop:forest-entropy} with multiplier $ d^L $. For $ K $ sufficiently large, $\widehat R(W)>d^Le(W)$. Since the original host arrows $ W$, the claimed mass bound follows.
+
+\end{proof}
+
+\subsection{A dense witness}
+
+\begin{lemma}\label{lem:dense-witness}
+
+For a finite simple graph $G$ with $ e=e(G)>0$ and maximum degree $\Delta$, put
+
+\begin{equation}
+s(G)=\max_{F\subseteq G,\ v(F)>0} e(F)/v(F).
+\end{equation}
+
+There is an absolute constant $c>0$ such that
+
+\begin{equation}
+\widehat R(G)>c\,\frac{s(G)}{\ln(\Delta+1)}\,e.
+\end{equation}
+
+In particular one dense subgraph, even one carrying a very small fraction of the target edges, can force a larger size Ramsey multiplier for the entire graph.
+
+\end{lemma}
+
+\begin{proof}
+
+Choose a connected subgraph $F$ of order $ k $ and edge count $ a $ with $ a/k=s(G)$, by taking a maximum-density subgraph and then one of its densest connected components. Write $ s=s(G)$. Put $\Lambda=c s/\ln(\Delta+1)$. If $\Lambda<1$, the bound follows from $\widehat R(G)\ge e $. Otherwise suppose $ H $ has at most $\Lambda e $ edges, and delete its vertices of degree above $ D=\lceil16\Lambda\Delta\rceil $. In any full target copy this deletion loses at most $ e/8$ target edges. Since $ s\le\Delta/2$, we have $\ln D=O(\ln(\Delta+1))$ uniformly.
+
+Independently color the retained host edges blue with probability $p=16\ln D/s $ and red otherwise. A sufficiently small absolute $ c $ ensures $ p<1/2$ and $2p\Lambda\le1/16$. Take a red bad event for every embedding of $ F $ into the retained graph. At a fixed host edge there are at most $ k^2D^{k-2}$ events, by spanning-tree traversal from a pinned preimage edge. Give each weight $\exp(-pa/2)=D^{-8k}$. Its probability is at most the square of its weight, and the sum of weights at a host edge is at most $ D^{-5k}$, using $ k^2\le D^{2k}$. The asymmetric local lemma therefore excludes all red events, with conditional blue probability at each edge at most $2p $.  For example its required weight sum is negligible compared with $ p $, since $\Lambda\ge1$ implies $ s\ge c^{-1}\ln(\Delta+1)$ and $ D\ge16\Delta\ge32s$.
+
+Fix an outcome with no red $F $ and at most $ e/16$ blue retained edges, which exists by the conditional expectation. Color all removed edges blue. Red $ G $ would contain red $ F $. A blue copy of the full $ G $ must retain at least $7e/8$ blue edges, impossible. This proves the bound.
+
+\end{proof}
+
+\section{Dense blocks and the entropy threshold}\label{sec:blocks}
+
+\subsection{Dense-block extraction}
+
+\begin{proposition}\label{prop:dense-blocks}
+
+Fix $A,B\ge1$. There is $ c=c(A,B)>0$ such that, for sufficiently large $ d $, every graph $ G $ with $\delta(G)\ge d $, $\Delta(G)\le d^A $ and $ e_G(U)\le B\log d\,|U|$ for $|U|\le2\lceil(\log d)^4\rceil$ satisfies
+
+\begin{equation}
+\widehat R(G)>\frac{cd}{\log\log d}\,e(G).
+\end{equation}
+
+\end{proposition}
+
+\begin{proof}
+
+Fix $A,B\ge1$. Suppose $ G $ has minimum degree at least $ d $, maximum degree $\Delta\le d^A $, and every set of order at most $2\ell $, where $\ell=\lceil(\ln d)^4\rceil $, has density at most $\sigma=B\ln d $. We show the lower bound with $\Lambda=c_{A,B}d/\ln\ln d $. All estimates are for sufficiently large $ d $ with $ A,B,c_{A,B}$ fixed. Assume a host $ H $ arrows $ G $ with $ m\le\Lambda e $, where $ e=e(G)$. Lemma~\ref{lem:dense-witness} gives $ s(G)=O_A(\Lambda\ln d)$ for the hereditary target density. Prune host vertices of original degree above $ D=\lceil16\Lambda\Delta\rceil $, and edges with both original endpoint degrees above $ P=\lceil32\Lambda s(G)\rceil $. As in Lemma~\ref{lem:class-mass}, in any copy of $ G $ these two removals cost at most $ e/8$ and $ e/16$ target edges. The retained graph $ J $ has maximum degree at most $ D $ and each induced set of order $ k $ spans at most $ Pk$ edges.
+
+Greedily find two disjoint sets of $\ell $ vertices having at least $\ell^2/4$ edges between them, assign all currently present edges between them to a block, and delete those edges from the current graph. Repeat until no such pair remains. The union $ K $ of the assigned blocks has an edge partition into blocks of size at most $\ell^2$, with supports of size at most $2\ell $. Supports may overlap. The residual $ J-K $ has no such dense pair. Each block contributes at most $2\sigma\ell $ edges to any copy of $ G $, by local target sparsity. The number of blocks is at most $4m/\ell^2$, so their total target capacity is at most $8\sigma m/\ell$.
+
+\medskip\noindent\emph{A fixed component with mostly single uses of blocks.}
+
+By the low-entropy mass estimate in Lemma~\ref{lem:class-mass} with polynomial multiplier $d^2$, some class of components of order $ k $ and edge count $ a $ has at least $\exp(a(\ln d-\ln\ln d-O_A(1)))$ distinct types. Here $ a\ge dk/2$ and $ Pk/a\ge32\Lambda $. Set $\theta=1/64$. Call a copy of a type in the class bad if at least $\theta a/2$ of its edges occur in blocks containing two or more of its edges. Such a copy contains at least $\theta a/6$ disjoint same-block edge pairs, by grouping the edges into pairs inside each block. Put $ j=\lfloor\theta a/12\rfloor$.
+
+On a fixed connected image set of order $k $, the available edges number at most $ Pk $ and same-block edge pairs number at most $ Pk\ell^2$. Thus bad subsets of $ a$ edges number at most
+
+\begin{equation}
+\binom{Pk\ell^2}{j}\binom{Pk}{a-2j}.
+\end{equation}
+
+This bound allows extra choices with overlapping pairs. The logarithm is at most
+
+\begin{equation}
+a\ln(Pk/a)+O_\theta(a)-j\ln\bigl(Pk/(a\ell^2)\bigr).
+\end{equation}
+
+This follows from the binomial estimate with $j/a $ bounded below by a fixed positive constant. We have $ Pk/a=O_A(d\ln d)$, and $ Pk/(a\ell^2)\ge32\Lambda/\ell^2=d^{1-o(1)}$. The penalty is therefore $\Omega_\theta(a\ln d)$. For copies through a fixed edge there are at most $ D^{2k}$ connected image sets, by spanning-tree walks, with logarithm $ o(a)$. The ratio of the resulting bad type count to the number of distinct types is $\exp(-\Omega_\theta(a\ln d))$. Averaging over types gives one fixed component $ F $ whose bad-copy edge support has at most $ m\exp(-\Omega_\theta(a\ln d))<e/16$ edges. Delete that support from $ J $ to obtain $ J_1$, and put $ J_0=J_1-K $. Every copy of $ F $ in $ J_1$ is good in the original block partition, and $ J_0$ has no dense pair of the specified form.
+
+\medskip\noindent\emph{Red copies using many block edges.}
+
+Mark each block independently with probability $p_K=L_K\ln D/d $, for a sufficiently large absolute constant $ L_K $. A copy of $ F $ using at least $\theta a $ block edges uses at least $\theta a/2$ distinct blocks, by goodness. Use a red event for each such embedding, requiring all the blocks it uses to be unmarked. The number of events at one block has logarithm $ O(k\ln D)$. To bound it, pin an actual edge in the block and a target edge and traverse a fixed spanning tree of $ F $ in the degree-$ D $ graph. The factor $\ell^2$ for the choice of the actual edge is harmless. Give the event weight $\exp(-p_K\theta a/4)$. Its probability is at most the square of its weight. For sufficiently large $ L_K $ the weight sum at a block is at most $ D^{-k}$, and an event uses at most $ a $ blocks. The asymmetric local lemma applies and makes each conditional mark probability at most $2p_K $. Consequently the conditional expected marked block capacity is at most $16p_K\sigma m/\ell=o(e)$.
+
+\medskip\noindent\emph{Red copies using few block edges.}
+
+For a copy $\phi $ using fewer than $\theta a $ block edges, call a role exceptional if more than one eighth of its incident target edges map into $ K $. The sum of the degrees of exceptional roles is at most $16\theta a$. The other roles are called ordinary.
+
+There is a connected seed $T $ of at most $ L_s k\ln(D+1)/d $ vertices in $ F $ with a flagged subset $ S\subseteq T $ having the following property. For every role $ v $ outside $ T $, the set $ S\cap N_F(v)$ is nonempty. For every host vertex $ x $ adjacent in $ J_0$ to some vertex of $\phi(N_F(v))$, the fraction of vertices adjacent to $ x $ among $\phi(S\cap N_F(v))$ differs from the fraction among $\phi(N_F(v))$ by at most $1/16$. Adjacency here is measured in $ J_0$.
+
+To see this, initially sample $S $ by including each target vertex independently with probability $\alpha=L\ln(D+1)/d $. For each role $ v $ of degree $ d_v\ge d $, the sampled neighbor count differs from $\alpha d_v $ by at most $\alpha d_v/64$ except with probability $2\exp(-\Omega(\alpha d_v))$. For each candidate $ x $ as above, the sampled count of its adjacent neighbors similarly differs from its mean by at most $\alpha d_v/64$ with probability of failure at most $2\exp(-\Omega(\alpha d_v))$, by the additive binomial tail. On success the ratio error is at most $2/63<1/16$. The candidate count is at most $ D^2$ by bounded host degrees. Taking $ L $ large makes the total failure probability at a role at most $1/d $. Add all failed roles to $ S $, leaving the original sampled roles flagged. The resulting set dominates $ F $. A connected graph with a dominating set has a connected superset of that set with at most three times its size. Indeed the graph on the dominators joining pairs at distance at most three is connected, by assigning every vertex a dominator and following paths in $ F $. Use the paths along a spanning tree of that auxiliary graph. The expected number of original sampled and added failed roles is at most $(\alpha+1/d)k$, so an outcome of the required size exists. Added roles and connectors do not change the flagged sample.
+
+Given the seed image, assign each role in $T $ its singleton image list. At a role outside $ T $, take the list of all host vertices adjacent in $ J_0$ to at least three quarters of the flagged neighbor images. Every ordinary role has its true image on the list. Every listed candidate sees at least $11/16$ of the full actual neighbor image set, by the seed property. The list has size less than $\ell $. Otherwise select $\ell $ candidates and remove those candidates from the full neighbor image set. This costs at most $\ell=o(d_v)$ neighbors at each candidate. At least $\ell $ neighbors remain. An averaging choice of $\ell $ of them gives density at least $1/4$ between these two disjoint $\ell $-sets in $ J_0$, a contradiction.
+
+Enumerate the connected seed $T $, its flagged subset, its image in $ J_1$, the set of exceptional target roles, and an assignment of ordinary roles from their lists. Keep configurations that arise from a copy and a seed as above. At least $ a-16\theta a-\theta a\ge a/2$ edges join ordinary roles and have images in $ J_0$. These distinct edges are determined by the configuration. Independently mark each edge of $ J_0$ with probability $ p_0=L_0\ln\ln d/d$. Take a red event per configuration requiring those edges unmarked.
+
+Through a fixed residual edge the number of such configurations has logarithm $O_A(k\ln\ln d)$. To anchor the count, choose the preimage of an endpoint of that edge. If it belongs to $ T $, its image is pinned. Otherwise it passes the ordinary role's list and is adjacent to the image of some flagged seed neighbor. Choose that role and one of at most $ D $ host neighbors for its image. There are at most $2k^2D $ choices for this anchor. The number of connected target seed sets of size at most $ L_sk\ln(D+1)/d $ containing the anchored role is at most $\sum_{u\le L_sk\ln(D+1)/d}\Delta^{2u}$, by spanning-tree walks. For each seed set, its rooted image count is at most $ D^{|T|-1}$. Flags and exceptional-role sets cost at most $2^{|T|+k}$, and ordinary image choices at most $\ell^k $. Combining gives the asserted estimate since $ D=d^{O_A(1)}$ and $\ln k=O(k)$. The asymmetric local lemma with weights $\exp(-p_0 a/4)$ now applies for large $ L_0$ depending only on $ A,B $. In fact the weight sum at a variable is at most $\exp(-k\ln\ln d)$, while an event uses at most $ a $ variables and has probability at most the square of its weight. Conditional mark probabilities are at most $2p_0$.
+
+\medskip\noindent\emph{Complete the coloring.}
+
+The two local-lemma experiments have disjoint variable sets. After conditioning on their respective avoidances, the expected sum of marked block capacity and marked residual edges is at most $o(e)+2L_0 c_{A,B}e $. Choose $ c_{A,B}$ sufficiently small that some conditioned outcome has sum at most $ e/8$. Color marked edges and all previously pruned edges blue, and everything else red. A red copy of $ G $ would give one of the forbidden red events for $ F $. A blue copy could use at most $3e/16+e/16$ of its edges in the pruned sets and at most $ e/8$ in the retained graph. This proves the claimed restricted bound.
+
+\end{proof}
+
+\subsection{The refined entropy threshold}
+
+\begin{proposition}\label{prop:triple-log}
+
+Fix constants $A,M,B\ge1$. Let $ G $ have minimum degree at least $ d $, maximum degree at most $ d^A $, and density at most $ B\ln d $ on all sets of order at most $2\lceil(\ln d)^6\rceil $. Write $ r $ for the number of connected components, $ t_i $ for the multiplicities of their distinct types, and $ w_i=t_i/r $. For a fixed sufficiently large $ K=K_{A,M,B}$ and all sufficiently large $ d$,
+
+\begin{equation}
+r\mathcal H(w)\le e(G)\bigl(\ln d-\ln\ln\ln d-K\bigr)
+\quad\Longrightarrow\quad
+\widehat R(G)>Md\,e(G).
+\end{equation}
+
+\end{proposition}
+
+\begin{proof}
+
+\medskip\noindent\emph{A sparse blue allowanceon the extracted blocks.}
+
+Suppose a host with $m\le Md e $ arrows $ G $, where $ e=e(G)$. Follow Proposition~\ref{prop:dense-blocks}, with $\Lambda=Md $, $\eta=(\ln d)^{-2}$, $ D=\lceil2\Lambda\Delta(G)/\eta\rceil $, $ P=\lceil2\Lambda s(G)/\eta\rceil $, and $\ell=\lceil(\ln d)^6\rceil $. The two pruning allowances each become $\eta e $. The hereditary target density bound still gives $ P=O_{A,M}(d^2(\ln d)^3)$, and $ D $ remains polynomial. The high-diversity class exists by Lemma~\ref{lem:class-mass} with multiplier $ d^2$. The repeated-block bad copy count loses $\Omega(a\ln d)$ from the exponent, whereas the change in $ P $ costs only $ O(a\ln\ln d)$. Thus choose the fixed component $ F $ with bad-copy edge support at most $\eta e$.
+
+The two red avoidance tests of the dense block proof apply with the same orders of mark probabilities. Their exponents use only the constant fraction thresholds and the anchored counts $\exp(O(k\ln D))$ for the block experiment and $\exp(O(k\ln\ln d))$ for the residual experiment. Conditional on avoiding the first family, the expected marked block target capacity is
+
+\begin{equation}
+O\bigl((\ln D/d)(B\ln d)m/\ell\bigr)=o(\eta e).
+\end{equation}
+
+Fix a block outcome with capacity at most $\eta e$. Its marks use variables disjoint from the residual red test.
+
+\medskip\noindent\emph{Count the remaining blue edges in a full embedding.}
+
+Run the residual edge experiment with independent probability $p_0=L_0\ln\ln d/d $. Condition on avoidance of its red events. The event weight sum at each edge is at most $ q=\exp(-k\ln\ln d)$, with $ k=v(F)\ge d+1$. For any specified set of $ t $ residual edges, the conditional probability that all are blue is at most $(p_0\exp(2q))^t $, by the conditional local lemma. In any fixed full target image in the original host, at most $4\eta e $ edges can be blue through degree pruning, high-high pruning, bad-copy support, and the fixed block coloring together. Therefore a full blue image has probability at most $(p_0\exp(2q))^{(1-4\eta)e}$. This also bounds the probability if a specified image contains an unmarked block edge, in which case that probability is zero.
+
+As in Proposition~\ref{prop:forest-entropy}, the number of full edge-image sets in the original host is at most $\exp(r\mathcal H(w)+O_{M,A}(e\ln d/d))$. The logarithm of the expected number of blue images is consequently at most
+
+\begin{equation}
+r\mathcal H(w)+O_{M,A}(e\ln d/d)
+-(1-4\eta)e\bigl(\ln d-\ln\ln\ln d-O_{A,M,B}(1)\bigr).
+\end{equation}
+
+For large fixed $K$ this is negative under the displayed hypothesis. The conditioning precludes a red copy and there is an outcome with no blue copy, a contradiction.
+
+\medskip\noindent\emph{Class consequence with a quantitative mass allowance.}
+
+Fix $L>1$. The same proof excludes host multiplier $ d^L $ when restricted to low-entropy portions only if the extracted block capacity can be paid at that multiplier. At a fixed linear budget there is instead the following mass statement. For every $0<\mu\le1$ fixed, select from each class $(k,a)$ any set of at most $\exp(a(\ln d-\ln\ln\ln d-K'))$ distinct types. For large enough $ K'$ depending on $ A,M,B,\mu $, their union of components has edge mass less than $\mu e(G)$ in a target with host budget $ Md e(G)$. Otherwise the same host has edge budget at most $(M/\mu)d $ times the selected mass, while the class entropy contribution is only $ O(e(G)/d)$ with the selected mass in place of $ e(G)$, as in the universal entropy argument. Apply the theorem at $ M/\mu$.
+
+\end{proof}
+
+\section{Targets with a narrow degree range}\label{sec:near-regular}
+
+\subsection{The near-regular estimate}
+
+\begin{theorem}\label{thm:near-regular}
+
+There is an absolute $\kappa=10^{-8}$ such that, for every fixed $ A,M\ge1$ and all sufficiently large $ d $, every graph $ G$ satisfying
+
+\begin{equation}
+\delta(G)\ge d,\qquad \Delta(G)\le A d(\log d)^\kappa
+\end{equation}
+
+has $\widehat R(G)>Md\,e(G)$.
+
+\end{theorem}
+
+\begin{proof}
+
+\medskip\noindent\emph{Setup and two block scales.}
+
+It suffices to prove the theorem assuming target density at most $\sigma=B\ln d $ on sets of order at most $2\lceil d^{1/4}\rceil $, for a fixed $ B $. Indeed Proposition~\ref{prop:local-sparsity} either gives a polynomial lower bound on the original target or leaves a subtarget with at least a quarter of the edges, minimum degree $\lfloor d/4\rfloor $, and logarithmic density on all sets up to a fixed polynomial cutoff. Its maximum degree is still at most $ A'\lfloor d/4\rfloor(\ln\lfloor d/4\rfloor)^\kappa $ with fixed $ A'$. The theorem for that subtarget at a sufficiently large fixed multiplier gives the claimed lower bound on the original target.
+
+Suppose $H $ arrows $ G $ with $ m\le\Lambda e $, where $\Lambda=Md $ and $ e=e(G)$. Write $ L=\ln d $, $\Delta=\Delta(G)$, and $ D=\lceil16\Lambda\Delta\rceil $. Delete host vertices of degree above $ D $, losing at most $ e/8$ edges in any target copy. Write $ J $ for the remaining host. It has maximum degree at most $ D $ and every set of order $ k $ has at most $ Dk $ edges. For sufficiently large $ d $, $ d\le D\le d^3$.
+
+First greedily extract the edges between any two disjoint sets of order $\ell_1=\lceil L^4\rceil $ of current cross density at least $\rho_1=1/4$. When none remain, repeat at order $\ell_2=\lceil d^{1/4}\rceil $ and density $\rho_2=d^{-1/8}$. The assigned blocks have pairwise disjoint edge sets, with possibly overlapping supports. Let $ K $ be their union and $ J_0=J-K $. The residual graph has neither kind of dense rectangle. The sum of target capacities at scale $ i $ is at most $2\sigma m/(\rho_i\ell_i)$, since each block contains at least $\rho_i\ell_i^2$ edges and contributes at most $2\sigma\ell_i$ edges to any target image.
+
+Proposition~\ref{prop:triple-log} implies some class of connected components of order $k $ and edge count $ a $ has at least $\exp(a(\ln d-\ln\ln\ln d-O(1)))$ distinct types. In fact if every class had at most the indicated type count with a sufficiently large fixed constant, the full forest entropy would violate that bound. We use $ a\ge dk/2$, $ a\le\Delta k/2$, and $ k\ge d+1$.
+
+\medskip\noindent\emph{Strip two types of bad copies.}
+
+Put $\theta=L_0\ln L/L $ with a sufficiently large fixed $ L_0$. Call a copy repeat-bad if at least $\theta a/2$ of its edges occur in blocks containing at least two of its edges. As in Proposition~\ref{prop:dense-blocks}, such a copy supplies $ j=\lfloor\theta a/12\rfloor $ disjoint same-block pairs. On a connected image set there are at most $ Dk $ available edges and at most $ Dk\ell_2^2$ same-block pairs. Thus the logarithm of the bad edge subset count is bounded by
+
+\begin{equation}
+a\ln(Dk/a)+O(a)-j\ln\bigl(Dk/(a\ell_2^2)\bigr).
+\end{equation}
+
+The error is uniform as $\theta\to0$ by $ j\ln(a/j)=O(a)$. The ratio inside the last logarithm is at least $32\Lambda/\ell_2^2=d^{1/2+o(1)}$, while $\ln(Dk/a)\le\ln d+\kappa\ln L+O_{A,M}(1)$. With $ L_0$ sufficiently large the deficit beats the class threshold by $\Omega(a\ln L)$, even after the factor $ D^{2k}$ for connected image sets through a fixed edge.
+
+For the other strip, put $b=256\kappa $, $ T=D/L^b $, $\epsilon=L^{-1/4}$, and $ s=\lfloor(20\epsilon)^{-1}\rfloor $. For a role of a copy in $ J $, call it defective if there is a tuple of between two and $ s $ distinct host candidates, each adjacent in $ J_0$ to at least a $(1-5\epsilon)$ fraction of its actual neighbor images, with common $ J_0$ neighborhood of size at most $ T $. Call a copy tuple-bad if defective roles have total degree at least $ a/8$. A witnessing tuple at a role has common neighborhood containing at least three quarters of the role's actual neighbors, by the union bound. Apply Lemma~\ref{lem:restricted-star} using one such tuple per defective role. For each restricted edge assign its deficit $\ln(D/C)$, with $ C $ the tuple's common neighborhood size, at the endpoint of larger deficit. The total assigned deficit is at least $ b a\ln L/32$. For example each role restricts at least three quarters of its edges and each edge is counted at most twice in the incidence sum. The witness tuple at a role has at most $(1+D)^{2s+2}$ choices, since every member lies within distance two in $ J $ of the true image. These choices and the counts of assigned edges cost $\exp(O(k s\ln D))=\exp(o(a))$. The logarithm of the bad count through a fixed edge is at most
+
+\begin{equation}
+a(\ln d+\kappa\ln L+O(1))-b a\ln L/32+o(a).
+\end{equation}
+
+Because $b/32=8\kappa $, this is below the class threshold by $\Omega_\kappa(a\ln L)$ for large $ d$.
+
+Average the sum of the repeat-bad and tuple-bad supports over the same class. As in the two preceding counts, the support is the set of all host edges occurring in at least one such bad copy of a type. Select a fixed type $F $ whose combined support has at most $ e/16$ edges and delete that support from $ J $, leaving $ J_1$. Badness is still measured in the original $ J $ and $ J_0$. Every copy of $ F $ in $ J_1$ is good for both tests.
+
+\medskip\noindent\emph{Copies using many extracted edges.}
+
+Independently mark each block with probability $p_K=C_K\ln D/(\theta d)$. A copy of $ F $ using at least $\theta a $ edges of $ K $ uses at least $\theta a/2$ distinct blocks, by the first strip. The red event for this embedding requires those blocks all unmarked. Through a variable the number of events has logarithm $ O(k\ln D)$, by pinning a target edge and an actual edge in that block and traversing the target spanning tree. For large fixed $ C_K $, the asymmetric local lemma applies with half-exponent weights, as in Proposition~\ref{prop:dense-blocks}. Conditional mark probabilities are at most $2p_K $. At each scale the expected marked target capacity divided by $ e$ is
+
+\begin{equation}
+O\left(\frac{\sigma\ln D}{\theta\rho_i\ell_i}\right)=o(1).
+\end{equation}
+
+This excludes all red copies in this branch at small blue cost.
+
+\medskip\noindent\emph{Tolerant lists and the small support intersections.}
+
+Now consider a copy of $F $ in $ J_1$ using fewer than $\theta a $ edges of $ K $. Call a role exceptional if more than $2\epsilon $ of its incident target edges use $ K $. Its total exceptional degree volume is at most $\theta a/\epsilon $, and there are at most $ u=\theta a/(\epsilon d)$ exceptional roles. Proposition~\ref{prop:dense-blocks} applies with sample rate $ C_s\epsilon^{-2}\ln(D+1)/d $ and additive error $\epsilon $. Indeed the additive binomial tail exponent is $\Omega(\epsilon^2 d_v)$ times the sample rate for a role of degree $ d_v $. Thus we can record a connected seed of size $ O(k\epsilon^{-2}\ln(D+1)/d)$ and its flagged sample. Outside the seed, use the list of candidates adjacent in $ J_0$ to at least a $(1-4\epsilon)$ fraction of the flagged neighbor images. The true image of a nonexceptional role lies in this list. Each listed candidate sees at least a $(1-5\epsilon)$ fraction of the actual neighbor images in $ J_0$. As in the baseline, any such list of size at least $\ell_1$ yields a prohibited dense pair by averaging over the actual neighbor set. Seed lists are singletons with the true images.
+
+Ignore empty lists and lists containing a tuple of between two and $s $ candidates with common $ J_0$ neighborhood at most $ T $. This operation is determined by the seed. Empty lists are exceptional, and every ignored nonempty list is at a defective role. Thus at most $ a/8+\theta a/\epsilon $ target degree volume is ignored. Every remaining nonsingleton list consists of vertices of host degree at least $ T $ in $ J_0$ and every subset of at most $ s $ of its candidates has more than $ T$ common neighbors. This includes singleton subsets of a nonsingleton list by its pair condition.
+
+Put $T'=T d^{-1/16}$ and let $ Q $ join pairs of $ J_0$-codegree above $ T'$. By Lemma~\ref{lem:codegree}, $ Q $ has maximum degree less than $ q=\ell_2$. In detail, $ q $ partners of a vertex $ x $ would each see at least $ T'-q $ vertices in $ N_{J_0}(x)$ outside those partners. Averaging over a disjoint $ q $-subset would give a rectangle of density at least $(T'-q)/D>\rho_2$, a contradiction.
+
+Let $X $ be the host vertices of $ J_0$-degree at least $ T $. For every $ t $-set $ S $ of host centers, where $ t=128$, let $ B_S=X\cap\bigcap_{z\in S}N_{J_0}(z)$. Retain variables only for $1\le |B_S|\le q $. Use $ h=32$ independent rounds of these variables. In each round independently mark each retained variable with probability $ p=c_0 T/(h\Lambda\Delta D^t)$. A mark colors blue every retained edge of $ J_1$ incident to $ B_S $. The target capacity of that mark is at most $\Delta|B_S|$. Each $ x\in X $ belongs to at most $ D^t $ such blocks, and $|X|\le2m/T $. Thus the unconditional expected total marked capacity is at most $2c_0 e$.
+
+\medskip\noindent\emph{A constant number of rounds covers a good list.}
+
+Consider a remaining nonsingleton list and a nonempty subset $Y $ of its candidates not yet covered. If $|Y|\le s $, at least $ T $ centers are adjacent to all of $ Y $. If $|Y|>s $, count $ s $-sets of $ Y $ over their common neighborhoods as in Lemma~\ref{lem:centers}. Writing $ a_z=|N_{J_0}(z)\cap Y|$, we have
+
+\begin{equation}
+\sum_z (a_z/|Y|)^s\ge T,\qquad \sum_z a_z/|Y|\le D.
+\end{equation}
+
+Consequently at least $T/2$ centers see a $(1-\vartheta)$ fraction of $ Y $, where $\vartheta=\ln(2D/T)/(s-1)$. In either case let $ W $ be the set of those centers, with zero deficit in the small-list case. By averaging some $ x\in Y $ sees at least half the centers in $ W $. Let $ W_x $ be these centers, of size at least $ T/4$.
+
+Choose a uniform $t $-set of $ W_x $. Its block contains $ x $. For any $ y $ outside $\{x\}\cup N_Q(x)$, the probability that $ y $ is in the block is at most $(T'/|W_x|)^t\le(4d^{-1/16})^t $. At most $ D^2$ vertices can share any $ J_0$ neighbor with $ x $. Thus a union bound shows a $1-o(1)$ fraction of the $ t $-sets give blocks contained in $\{x\}\cup N_Q(x)$ and therefore retained. Such a block covers all of $ Y $ when $|Y|\le s $, and covers at least a $(1-t\vartheta)$ fraction otherwise. There are $\Omega_t(T^t)$ eligible variables in a fresh round. The chance of at least one such mark is at least a fixed positive constant times $\min(1,pT^t)$, which is $\Omega(L^{-b(t+1)})$ for fixed $ c_0$.
+
+For sufficiently large $d $, $ t\vartheta\le L^{-1/5}$, since $ s $ has order $ L^{1/4}$ and $\ln(2D/T)=O(\ln L)$. At most $ h-1$ successful rounds shrink a set of at most $\ell_1$ candidates to order at most $ s $, and a further successful round covers it. The probability that all candidates are covered after $ h$ rounds is therefore at least
+
+\begin{equation}
+\beta=L^{-1/8},
+\end{equation}
+
+for sufficiently large $d $. The fixed exponent $ b(t+1)h $ is below $1/8$ with the stated $\kappa $, and the fixed multiplicative constants are absorbed as $ d\to\infty$. These events use only their own listed candidates and the independent marks.
+
+\medskip\noindent\emph{Robust red tests without encoding exceptional roles.}
+
+For each eligible seed configuration with at least $a/8$ total degree in nonignored nonsingleton roles, deterministically choose a maximum matching of those roles to their lists. Since every nonexceptional role has its true image in its list, at most $ u $ roles go unmatched. We have $ u=o(a/\Delta)$ because $(\Delta/d)\theta/\epsilon=o(1)$. Thus at least $ a/(16\Delta)$ roles are matched. A marked block variable can affect at most $ q^2$ such role blockage indicators. Indeed its block has at most $ q $ candidates $ y $, and for each such $ y $ there are at most $ q $ matched lists containing $ y $. Their matched images are distinct and lie in $\{y\}\cup N_Q(y)$ by the clique property. This proves the read bound even if lists overlap arbitrarily.
+
+The mean blocked count is at least $\mu_0=\beta a/(16\Delta)\gg u $. The product H\"{o}lder lower-tail argument in Lemma~\ref{lem:read-bound} gives probability at most $\exp(-\mu_0/(8q^2))$ of blocking at most $ u $ matched roles. A red extension would require this event since it can avoid a fully blocked list only at an exceptional role. Take one event per configuration. At a fixed variable one of its at most $ q $ members lies in a tested list. Pin that member's seed image, or a flagged neighbor image within distance one. Count connected seeds and their rooted images, and their flag subsets. The resulting logarithm is $ O(k\epsilon^{-2}(\ln(D+1))^2/d)$. It is $ o(\mu_0/q^2)$ since $ q=O(d^{1/4})$, $ a\ge dk/2$, and $\Delta/d\le A L^\kappa $. An event uses at most $ hk\ell_1 D^t $ variables. The local lemma with half-exponent weights applies, as the per-variable weight sum is exponentially small in $\mu_0/q^2$ and $ k\ge d+1$. Its conditioning multiplies each mark probability by at most two.
+
+For the remaining configurations, the total degree volume of ignored and nonsingleton roles is at most $a/4+o(a)$. Match the eligible singleton roles to their specified images, losing at most $ u $ roles. In a witnessing embedding, excluding the exceptional roles and any unmatched roles costs at most $2\Delta u=o(a)$ further edges. Therefore the determined set of existing $ J_1$ image edges between matched singleton roles has at least $ a/2$ distinct members. Independently mark edges of $ J_1$ with probability $ c_0/\Lambda $. A red extension requires that every such marked image edge be incident to one of at most $ u $ exceptional roles. For a fixed candidate exceptional set, removing its at most $\Delta u=o(a)$ edges leaves a fixed positive fraction of $ a $ edges required unmarked. This has probability $\exp(-\Omega_M(k))$. Since $ u=o(k)$, the number of exceptional subsets is $\exp(o(k))$. The rooted configuration count through a variable is the same as in the nonsingleton test. The local lemma again excludes all these events and makes conditional mark probabilities at most $2c_0/\Lambda$.
+
+\medskip\noindent\emph{Complete the coloring.}
+
+The extracted block test, the common-neighborhood intersection test, and the singleton edge test use independent variable families. The red events within each family are defined without looking at the other marks. Condition each family on avoiding its events. The combined expected marked target capacity is at most $o(e)+4c_0e+2c_0e $. Choose $ c_0$ sufficiently small and fix an outcome with marked capacity at most $ e/8$. Color all marked edges and all pruned edges blue, and color the remaining edges red. Red $ G $ would contain a red $ F $ in one of the three excluded cases. A blue copy of $ G $ can use at most $ e/8+e/16$ edges at the pruned locations, and at most $ e/8$ edges in the marked locations. This contradiction proves the restricted superlinear theorem.
+
+\end{proof}
+
+\section{Incidence targets of exact right degree}\label{sec:incidence}
+
+\subsection{The incidence estimate}
+
+\begin{theorem}\label{thm:incidence}
+
+Fix $A,B,M,\tau>0$ with $ A,M\ge1$. For sufficiently large $ d $, let $ G $ be bipartite with exact right degree $ d $, left minimum degree at least $ d(\log d)^\tau $, maximum degree at most $ d^A $, and $ e_G(U)\le B\log d\,|U|$ for $|U|\le d $. Then $\widehat R(G)>Md\,e(G)$.
+
+\end{theorem}
+
+\begin{proof}
+
+\medskip\noindent\emph{Pruning, two block scales, and a component class.}
+
+Suppose $H $ arrows $ G $ with $ m\le\Lambda e $, where $ e=e(G)$ and $\Lambda=Md $. Use the host degree cutoff $ D=\lceil16\Lambda\Delta(G)\rceil $, and let $ D_R=\lceil32\Lambda d\rceil $. Remove vertices of original degree above $ D $, and edges with both original endpoint degrees above $ D_R $. The target edge losses are at most $ e/8$ and $ e/16$. For the second bound, each such target edge has a right image of original degree above $ D_R $, and there are at most $2m/D_R $ such vertices. Low and high host vertices refer to original degree at most or above $ D_R $. Let $ J $ be the retained graph, and $ J_\times $ its high-low cross graph. Every $ k $-set of $ J $ spans at most $ D_Rk$ edges, since every retained edge has a low endpoint.
+
+Write $L=\ln d $, $ U=\ln L $, $\ell_1=\lceil L^4\rceil $, $\rho_1=1/4$, $\ell_2=\lceil d^{1/4}\rceil $, and $\rho_2=d^{-1/8}$. In $ J_\times $ greedily extract the edges between high and low sets of order $\ell_1$ of current cross density at least $\rho_1$. After exhaustion do the same at order $\ell_2$ and density $\rho_2$. The extracted blocks partition their edge union $ K $, with possibly overlapping vertex supports. Put $ J_0=J_\times-K $. It has neither kind of dense rectangle. The total target capacity of blocks at scale $ i $ is at most $2BLm/(\rho_i\ell_i)$, because each has at least $\rho_i\ell_i^2$ host edges and a target can use at most $2BL\ell_i $ edges there. All support orders are at most $ d $ for large $ d$.
+
+By Proposition~\ref{prop:triple-log}, some class of target components of order $k $ and edge count $ f $ has at least $\exp(f(\ln d-\ln\ln\ln d-O(1)))$ distinct types. Each has right order $ b=f/d $ and left order $ a=k-b $. The left minimum degree implies $ b/a\ge L^\tau $, so $ k\le2b $ for large $ d $. In particular $ D_R k/f=O_M(d)$, and the baseline type count on one image set is $\exp(f(\ln d+O_M(1)))$. The number of connected image sets of order $ k $ through a fixed host edge is at most $ D^{2k}$, whose logarithm is $ o(f)$.
+
+\medskip\noindent\emph{Three entropy strips.}
+
+Call a copy orientation-bad if at least $f/64$ edges have a left image of low host degree. Specify the left image set on its connected image set, at cost at most $2^k $. Edges at low left images lie in a pool of at most $ D_R a $ host edges. If there are $ g $ such edges, the logarithm of the two-pool binomial count is at most $ f\ln(D_R k/f)+O(f)-g\ln(k/a)$. This follows from the exponential binomial bound and the two-bin entropy bound. Since $\ln(k/a)\ge\tau\ln L $, the loss for an orientation-bad copy is $\Omega_\tau(f\ln L)$, which beats the class threshold. The number of choices of $ g $ contributes only $ o(f)$ to the exponent. Every orientation-good copy has at most $ b/32$ right roles with fewer than $ d/2$ high left image neighbors.
+
+Put $\theta=C_1\ln L/L $ for large fixed $ C_1$. Call a copy repeat-bad if at least $\theta f/2$ of its edges lie in blocks containing two or more edges of that copy. Proposition~\ref{prop:dense-blocks} supplies $ j=\lfloor\theta f/12\rfloor $ disjoint pairs inside individual blocks. The number of available pairs on one image set is at most $ D_R k\ell_2^2$. Choosing these pairs and the remaining single edges gives a logarithmic count at most $ f\ln(D_Rk/f)+O(f)-j\ln(D_R k/(f\ell_2^2))$. The uniform $ O(f)$ error follows from $ j\ln(f/j)=O(f)$. The last ratio is at least $ d^{1/2+o(1)}$. Thus this strip pays $\Omega(f\ln L)$ beyond the baseline.
+
+For the final strip take $\varepsilon=L^{-1/4}$, $ s=\lfloor(20\varepsilon)^{-1}\rfloor $, and $ T=D_R/U^{B_0}$ for a large fixed $ B_0$. Call a right role defective if some tuple of \textbf{one to $ s $} distinct low vertices has a common $ J_0$ neighborhood of size at most $ T $ containing at least $ d/8$ actual left image neighbors of the role. Call the copy tuple-bad if at least $ b/8$ roles are defective. Every defective role supplies at least $ d/8$ edges restricted to the designated common neighborhood. The role restrictions have distinct right endpoints. Specify the role image, the witness tuple, and the restricted edge counts as in Lemma~\ref{lem:restricted-star}. Each tuple vertex lies within distance two in $ J $ of the actual right image, or coincides with it. The logarithmic cost of witness designations and counts is $ O(ks\ln D)=o(f)$. The restricted edges pay penalty at least $(f/64)\ln(D_R/T)=(B_0/64)f\ln U $ in the binomial count relative to $ f\ln(D_Rk/f)+O(f)$. In fact the restricted choices at a role with common size $ C $ and designated count $ g_v $ are bounded by $\binom C{g_v}$, and the unrestricted term by $\binom{D_R k}{f-\sum g_v}$. The entropy estimate for the $ g_v $ distributes their common $ D_R $ baseline over at most $ k $ roles. This gives the deficit $\sum_v g_v\ln(D_R/C)$ for singleton witnesses as well. Take $ B_0$ large enough to beat the gap $ f\ln U$ in the class threshold.
+
+For a type in the class, its bad support is the set of all edges occurring in one of these three kinds of bad copy. The bounds through any fixed host edge, divided by the number of class types, are exponentially small in $f\ln U $. Average the support size over the class. Since $ m/e\le Md $, some fixed component type $ F $ has bad support at most $ e/16$. Delete it from $ J $ to get $ J_1$. The strip predicates still use the original $ J $ and $ J_0$ and the original assigned blocks. Every embedding of $ F $ into $ J_1$ is good for all three tests.
+
+\medskip\noindent\emph{Exclude the block-rich red branch.}
+
+Mark blocks independently with probability $C_2\ln D/(\theta d)$ for large fixed $ C_2$. For each embedding of $ F $ in $ J_1$ using at least $\theta f $ edges of $ K $, its red event requires at least $\theta f/2$ distinct blocks unmarked, by repeat-goodness. Through one block the logarithm of the embedding count is $ O(k\ln D)$ by pinning a target edge and its image in that block, then traversing a spanning tree. The red exponent can exceed this count by an arbitrary fixed factor since $ f\ge dk/2$. The asymmetric local lemma with half-exponent weights avoids these events and raises each mark probability by at most two. The conditional expected marked target capacity at each scale divided by $ e $ is $ O(BL\ln D/(\rho_i\ell_i\theta))=o(1)$.
+
+\medskip\noindent\emph{Select the oriented roles using an adaptive sample.}
+
+Consider an embedding $\phi $ of $ F $ into $ J_1$ using fewer than $\theta f $ edges of $ K $. For each right role $ v $ let $ A_v $ be its actual high left neighbor image set. Sample target vertices independently at rate $ p_s=C_3\varepsilon^{-2}\ln(D+1)/d $. A sampled target vertex is flagged, including its host image as part of the seed data. In particular the data show which flagged left images are high. At each right role require that the number of sampled vertices corresponding to $ A_v $ differ from $ p_s|A_v|$ by at most $ p_s d/16$. If $|A_v|\ge d/4$, also require simultaneous additive accuracy at most $\varepsilon $ for the sampled fraction of $ J_0$ neighbors of every low host candidate that meets $ A_v $ in $ J_0$, relative to its fraction on all of $ A_v $. There are at most $ D^2$ such candidates. For the accuracy require deviations at most $\varepsilon p_s|A_v|/4$ for both numerator and denominator. The binomial additive tails have exponent $\Omega(\varepsilon^2 p_s d)$ and their ratio error is less than $\varepsilon $. The union of the count and accuracy failures has probability at most $1/(2d)$ at each right role for large fixed $ C_3$. A candidate with no adjacency to $ A_v $ cannot pass a positive sampled-fraction threshold. Also require at every role of either side at least one sampled neighbor, with failure probability at most $1/(2d)$ by minimum degree $ d$.
+
+Add all failed roles to the seed and connect the resulting dominating set by paths of length at most three along a spanning tree of its distance-three graph. Leave only the original sample flagged. Taking an outcome of no more than the expected number of sampled and added roles gives a connected seed of order $O(k\varepsilon^{-2}\ln(D+1)/d)$. Its size is $ o(b)$, since $ k\le2b$.
+
+From the seed data, test each right role outside the connected seed whose number of flagged high left image neighbors is at least $p_s d/3$. Every tested role has $|A_v|\ge d/4$, by the sample count accuracy. Every role outside the seed with $|A_v|\ge d/2$ is tested. Thus all but at most $ b/32+o(b)$ right roles are tested. The true host image of every tested role is low, since it has a flagged high actual neighbor and $ J$ has no high-high edge.
+
+For a tested role take the list of low host candidates adjacent in $J_0$ to at least a $(1-4\varepsilon)$ fraction of its flagged high left neighbor images. Each candidate sees at least a $(1-5\varepsilon)$ fraction of $ A_v $ in $ J_0$. A list with at least $\ell_1$ members gives a prohibited first-scale rectangle, by averaging $\ell_1$ vertices of $ A_v $ against $\ell_1$ candidates. Its two sides are disjoint by high and low host degrees. The true image belongs to the list except possibly when more than $2\varepsilon|A_v|\ge\varepsilon d/2$ of the role's high-left edges are in $ K $. In fact the true image has all the other high-left edges in $ J_0$, so the fraction test follows from the sampling estimate. There are at most $ u=2\theta b/\varepsilon $ such exceptions, since right roles partition the edges and the embedding uses fewer than $\theta f $ edges in $ K$.
+
+Ignore empty lists and lists containing a tuple of between one and $s $ members with common $ J_0$ neighborhood at most $ T $. Empty lists are exceptional. A tuple from a tested list shares at least $(1-5\varepsilon s)|A_v|\ge3d/16>d/8$ actual left neighbors, so a nonempty ignored list is at a defective role. Fewer than $ b/8$ roles are defective by the strip. Therefore at least $3b/4$ tested roles have nonempty lists left after ignoring, for large $ d $. Every nonempty subset of up to $ s $ candidates of such a list has more than $ T $ common neighbors in $ J_0$. In particular even a singleton candidate has $ J_0$ degree above $ T$.
+
+\medskip\noindent\emph{Small intersections of host neighborhoods.}
+
+Put $T'=T d^{-1/16}$ and $ q=\ell_2$. Join two low host vertices in $ Q $ when they have $ J_0$-codegree greater than $ T'$. Its maximum degree is below $ q $. Otherwise $ q $ low partners of $ x $ each have more than $ T'$ neighbors in $ N_{J_0}(x)$, a set of at most $ D_R $ high vertices. Choose $ q $ of those high vertices by averaging. The resulting cross density is at least $ T'/D_R>\rho_2$, a prohibited rectangle. Here $ T'\gg q $, so there are enough high vertices to choose from. Set $ X=\{x\text{ low}:\deg_{J_0}(x)\ge T\}$.
+
+Fix an integer $t>32(A+3)$ and let $ h=32$. For each $ t $-set $ S $ of high host centers let $ B_S $ be the set of $ x\in X $ adjacent in $ J_0$ to every member of $ S $. Retain variables only for $1\le|B_S|\le q $. In each of $ h $ independent rounds mark each with probability $ p=c_0 T/(h\Lambda d D_R^t)$ for small fixed $ c_0$. A mark colors all retained cross edges of $ J_1$ incident to $ B_S $ blue. The oriented target capacity of a mark, counting edges whose right image is low, is at most $ d|B_S|$. Every $ x\in X $ belongs to at most $ D_R^t $ variables per round and $|X|\le2m/T $. Consequently the unconditional expected marked oriented capacity is at most $2c_0e $. All cross edges in any target copy with right image high number at most $ d(2m/D_R)\le e/16$, an allowance used only once across these marks.
+
+Take any remaining list and any nonempty subset $Y $ of still uncovered candidates. If $|Y|\le s $, at least $ T $ centers cover all of $ Y $. Otherwise let $ a_w=|N_{J_0}(w)\cap Y|$. Counting common neighbors of the $ s $-sets of $ Y $ gives $\sum_w(a_w/|Y|)^s\ge T $, while $\sum_w a_w/|Y|\le D_R $. Thus at least $ T/2$ centers each cover at least a $(1-\vartheta)$ fraction of $ Y $, with $\vartheta=\ln(2D_R/T)/(s-1)$. Indeed the smaller terms together contribute at most $ D_R(1-\vartheta)^{s-1}\le T/2$. Some candidate $ x\in Y $ meets at least $ T/4$ of the indicated centers. A uniform $ t $-set of those centers gives a block containing $ x $. Any vertex outside $\{x\}\cup N_Q(x)$ belongs to it with probability at most $(4T'/T)^t $. At most $ D^2$ vertices share any neighbor with $ x $. Our fixed $ t $ and $ D\le d^{A+2}$ make the union bound $ o(1)$. Hence $\Omega_t(T^t)$ such variables are retained and cover all but a $ t\vartheta $ fraction of $ Y$, or all of it in the small-list case.
+
+In a fresh round, conditional on all previous rounds, the chance of at least one such mark is $\Omega(\min(1,pT^t))=\Omega(U^{-B_0(t+1)})$. For large $ d $, $ t\vartheta\le L^{-1/5}$. A list starts below $\ell_1$, so $ h $ successful rounds cover it, with the final round covering the last at most $ s $ candidates together. This works for a singleton from the first round onward. The probability that a list is fully blocked is at least $\beta=U^{-C_4}$ for a fixed constant $ C_4$ depending on the stated parameters. This lower bound exceeds $ u/b=O(L^{-3/4}\ln L)$ by an unbounded factor.
+
+\medskip\noindent\emph{Robust red event and blue budget.}
+
+For each seed configuration arising from one of the low-block-usage embeddings, choose a maximum matching of the remaining roles to their lists, deterministically. At most $u $ go unmatched because the nonexceptional true images are distinct. There are at least $ b/2$ matched roles for large $ d $. Every list is a clique in $ Q $ by its pair condition when it has at least two members. For any candidate $ y $, at most $ q $ matched lists contain it, since their matched images lie in $\{y\}\cup N_Q(y)$ and are distinct. Thus a mark variable affects at most $ q^2$ blocked-role indicators, including when it removes only part of a list.
+
+Each matched role is fully blocked with probability at least $\beta $. By Lemma~\ref{lem:read-bound}, blocking at most $ u $ roles has probability at most $\exp(-\Omega(\beta b/q^2))$. A red extension with this seed would require that event. For a nonexceptional role its true image is on the list, and a block mark covering that image paints its edges to flagged high left neighbors blue. Thus a fully blocked role in a red extension must be exceptional, without any specification of their identities.
+
+At a variable $B_S $, one of its at most $ q $ members lies in a tested candidate list of an event using it. That member sees at least one flagged high left neighbor image in $ J_0$. Choose and pin that seed image, counting at most a fixed polynomial in $ k,D,q $ choices. Count connected target seeds by spanning-tree walks, their rooted images in $ J_1$, and their flag subsets. The logarithm of the number of events at the variable is $ O(k\varepsilon^{-2}(\ln(D+1))^2/d)$, including the anchor choices since $ k\ge d+1$. It is $ o(\beta b/q^2)$ since $ q=O(d^{1/4})$, $ k\le2b $, and $\beta $ is an inverse fixed power of $ U $. An event uses at most $ hb\ell_1 D_R^t $ variables. The half-exponent asymmetric local lemma applies, with per-variable weight sum exponentially small in $\beta b/q^2$ and hence smaller than any fixed inverse power of $ d $ since $ b\ge d$. The conditioning raises each intersection mark probability by at most two.
+
+The block-rich and intersection tests use independent variable families, and each excludes its red events without reference to the other marks. Condition both on their respective avoidances. Their combined expected marked oriented capacity is at most $o(e)+4c_0e $, with the extra $ e/16$ right-high allowance for the intersection marks. Fix an outcome with marked oriented capacity at most $ e/8$ for small $ c_0$. Color all marked and all pruned edges blue. A red $ G $ contains the excluded $ F $. A blue $ G $ would have at most $3e/16+e/16$ edges in the degree pruning and bad-support deletion, at most $ e/8$ edges charged to marked capacity, and at most $ e/16$ additional edges at right-high images for the cross star marks. This is less than $ e$. The contradiction proves the lemma.
+
+\end{proof}
+
+\section{Proof of the main theorem}\label{sec:assembly}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+
+Suppose the theorem fails. The polynomial maximum-degree and local-sparsity reductions give fixed constants $B,M_0\ge1$, arbitrarily large integers $ d_0$, targets $ G_0$, and hosts $ H$ such that
+
+\begin{equation}
+\delta(G_0)\ge d_0,\quad \Delta(G_0)\le d_0^B,\quad
+H\to G_0,\quad m=e(H)\le M_0d_0e(G_0).
+\end{equation}
+
+Fix $K>10(B+2)^2$. The targets may also be required to satisfy $ e_{G_0}(U)\le B_K\log d_0\,|U|$ for $|U|\le d_0^K $, with fixed $ B_K $. In each $ G_0$ orient edges from the endpoint of larger original degree to the other endpoint, breaking ties by any fixed vertex order. Independently label vertices left or right and keep an edge only when its orientation is from a left label to a right label. Every edge survives with probability $1/4$, so a choice keeps at least $ e(G_0)/4$ edges. Denote this bipartite graph by $ F_0$.
+
+For every dyadic integer $q $ put the right vertices of $ F_0$ whose degree in $ G_0$ is in $[q,2q)$ into one band and keep all their $ F_0$ incident edges. Every band is a subgraph of $ G_0$ and $ q\ge d_0/2$. The left vertices appearing in a band have original degree at least $ q $. In each band repeatedly peel vertices of current degree below $ q/128$. At a left vertex $ v$, the total possible loss over all bands is at most
+
+\begin{equation}
+\sum_{q\le\deg_{G_0}(v),\ q\text{ dyadic}} q/128\le 2\deg_{G_0}(v)/128.
+\end{equation}
+
+A right vertex belongs to only one band, and its loss is at most its original degree divided by $128$. Sum these bounds over vertices. They cost at most $6e(G_0)/128$, leaving a total of at least $13e(G_0)/64$ edges. Every nonempty band has minimum degree at least $ q/128$ and right maximum degree below $2q $. Write $ E_q $ for its edge count, so its right order is at most $128E_q/q$.
+
+In each band split the left vertices at current degree $q(\ln q)^\kappa $. Make a low group of those at or below this threshold and a high group of those above it, keeping their incident edges as two subtargets. In each subtarget peel any left vertex whose current degree is below one eighth of its degree just before this split, and any right vertex whose current degree is below $ q/2^{16}$. The total left loss across both groups is at most $ E_q/8$, while total right loss is at most $2(128/2^{16})E_q$ since each right vertex can appear in at most two groups. The surviving subgraphs therefore keep an absolute positive fraction of the band's edges.
+
+Set $d'=\lfloor q/2^{16}\rfloor $. Keep the low-group subgraph as it is. It has minimum degree at least $ d'$ and maximum degree at most $ A_*d'(\ln d')^\kappa $ for a fixed $ A_*$, since the original right degrees in this band were below $2q $ and $ q/d'$ is bounded. It satisfies the hypotheses of Theorem~\ref{thm:near-regular}.
+
+For the high group independently retain exactly $d'$ edges at each right vertex, uniformly among its currently incident edges. Every left vertex keeps, in expectation, at least $ d'/(2q)$ of its current degree, a fixed positive fraction. Each left degree before this step is at least $ q(\ln q)^\kappa/8$. The probability of dropping below half its mean is $\exp(-\Omega(q))$ by the binomial-type Chernoff bound. A left bad event shares variables with at most $2q d_0^B $ others, since each selected right vertex had fewer than $2q $ neighbors and each left degree is at most $ d_0^B $. The symmetric local lemma gives a choice retaining the required fraction at every left vertex. The final edge count is at least $ d'/(2q)$ of that before this step. The normalized subtarget has exact right degree $ d'$ and left minimum at least $ c_* d'(\ln d')^\kappa $, for a fixed $ c_*>0$. For all sufficiently large $ d'$ this is at least $ d'(\ln d')^{\kappa/2}$. Its maximum degree is at most $(d')^{B+1}$, since $ q\ge d_0/2$. Because $ d'\le d_0^B $ and $\ln d_0=O(\ln d')$, the local density assumption of the incidence estimate is inherited, with a fixed constant $ B_1$. It satisfies the hypotheses of Theorem~\ref{thm:incidence} with $\tau=\kappa/2$.
+
+\medskip\noindent\emph{Sum the edge masses.}
+
+The subtargets $W $ produced by the banding and split have total edge count at least $ c e(G_0)$ for an absolute $ c>0$. They need only be subgraphs of the original target. Their vertices may overlap across bands or across the two groups, which does not affect monotonicity of the Ramsey property. The same host arrows every $ W $. For some $ W $ it has $ m=e(H)\le M_1 d'(W)e(W)$, for a fixed sufficiently large $ M_1$ depending on $ M_0$. Otherwise we would have
+
+\begin{equation}
+c e(G_0)\le\sum_W e(W)<\frac{m}{M_1}\sum_W\frac1{d'(W)}
+ =O\left(\frac{m}{M_1d_0}\right)\le O\left(\frac{M_0}{M_1}e(G_0)\right),
+\end{equation}
+
+contradicting large enough $M_1$. The sum is geometric, since there are at most two subtargets per dyadic $ q $ and $ d'(W)\ge q/2^{17}$ for sufficiently large $ d_0$. The near-regular or incidence estimate contradicts the cheap host of this $ W $ because $ d'(W)\to\infty$. This rules out every sequence at a fixed linear multiplier.
+
+Finally let $I(C)$ be the infimum of $\widehat R(G)/(Ce(G))$ over the target class at density at least $ C $. It is finite, since the class is nonempty and each finite graph has a finite size Ramsey number. The excluded sequences show $ I(C)\to\infty $. For all sufficiently large $ C $, take $ f(C)=CI(C)/2$ to obtain the strict claimed inequality. Isolated vertices cause no difficulty in taking subtargets. The original condition forces $ e(G)>0$ for $ C>0$, and the lower bound on any subtarget is a lower bound on the original graph.
+
+Extend $f$ to smaller real arguments arbitrarily.
+
+\end{proof}
+
+
+\section{Formal verification}\label{sec:formal}
+
+The complete proof has been formalized in Lean. Its final declaration is
+\begin{center}
+\texttt{Erdos911.erdos\_911\_full\_proof : Erdos911.ExactStatement}.
+\end{center}
+The proposition \texttt{ExactStatement} is the original statement of
+Erd\H{o}s problem 911 in the Formal Conjectures library\cite{FormalConjectures},
+including its real-valued function, its limit at positive infinity, the
+uniform density threshold, every positive finite graph order, and the
+strict conclusion. The definition of the size Ramsey number is also the
+same. An additional acceptance file writes out the complete proposition
+and checks the proof against it.
+
+The source uses Lean \texttt{v4.35.0-rc3} and the pinned mathlib revision
+\texttt{c55e6e786f49}\cite{Mathlib}. The final theorem's transitive axiom
+dependencies are only propositional extensionality, classical choice,
+and quotient soundness. No admitted proof step or additional unproved
+assumption is used. In particular, the conditional reductions in the
+source are supplied with proofs of their premises in the final theorem.
+
+\begin{samepage}
+The correspondence with the main parts of the exposition is as follows.
+\begin{center}
+\small
+\begin{tabular}{p{0.42\textwidth}p{0.48\textwidth}}
+Mathematical step & Lean source module \\
+\hline
+Dyadic decomposition and normalization &
+\texttt{HighBandReduction},\newline \texttt{UnbalancedMedianNormalization} \\
+Uniform dictionary and row assignment &
+\texttt{TargetBlockTests},\newline \texttt{DictionaryRowAssignment} \\
+Monochromatic block obstruction &
+\texttt{CheapMonochromaticBlock} \\
+Large-right and strongly unbalanced cases &
+\texttt{LargeRightBlockRamsey},\newline \texttt{HeavyPairReduction} \\
+Bounded component palette & \texttt{BoundedComponentPalette} \\
+Near-regular and incidence estimates &
+\texttt{NearRegularRamsey},\newline \texttt{IncidenceRamsey} \\
+Polynomial-degree and exact conclusions &
+\texttt{PolynomialRamsey},\newline \texttt{FullProof}
+\end{tabular}
+\end{center}
+\end{samepage}
+
+The source includes the concrete floor and ceiling choices and the
+numerical inequalities behind the asymptotic statements in the paper.
+The center lemma requires $s\ge2$ and positive cutoffs, and the
+residual-codegree lemma retains $q\ge1$, $ D>0$, $\rho\ge0$, and
+$T'\ge2q$; these hypotheses are checked at their uses.
+
+The accompanying Lean source supplies the full project and its reproduction instructions.
+
+
+\section*{Acknowledgments}
+OpenAI's ChatGPT and Codex were used for mathematical exploration, proof
+development, Lean formalization, and editing. This assistance is disclosed
+explicitly; the authors are responsible for the final manuscript. We retain
+the attribution and license notices of third-party formalization sources in
+the accompanying code.
+
+\clearpage
+\begin{thebibliography}{99}
+\bibitem{CFW}
+D. Conlon, J. Fox and Y. Wigderson,
+\emph{Three early problems on size Ramsey numbers},
+Combinatorica \textbf{43} (2023), 743--768.
+\href{https://doi.org/10.1007/s00493-023-00034-7}{doi:10.1007/s00493-023-00034-7}.
+
+\bibitem{DeBiasio}
+L. DeBiasio,
+\emph{A note on the multicolor size-Ramsey numbers of connected graphs},
+arXiv:2404.05856v3, 2026.
+\href{https://arxiv.org/abs/2404.05856v3}{Version of April 8, 2026}.
+
+\bibitem{Erdos}
+P. Erd\H{o}s,
+\emph{Some of my favourite problems which recently have been solved},
+in Proceedings of the International Mathematical Conference,
+Singapore, 1981, North-Holland Mathematics Studies \textbf{74},
+North-Holland, Amsterdam, 1982, 59--79.
+\href{https://doi.org/10.1016/S0304-0208(08)70415-8}{doi:10.1016/S0304-0208(08)70415-8}.
+
+\bibitem{EF92}
+P. Erd\H{o}s and R. J. Faudree,
+\emph{Size Ramsey functions},
+in Sets, Graphs and Numbers (Budapest, 1991),
+Colloq. Math. Soc. J\'anos Bolyai \textbf{60},
+North-Holland, Amsterdam, 1992, 219--238.
+
+\bibitem{EFRS}
+P. Erd\H{o}s, R. J. Faudree, C. C. Rousseau and R. H. Schelp,
+\emph{The size Ramsey number},
+Period. Math. Hungar. \textbf{9} (1978), 145--161.
+\href{https://doi.org/10.1007/BF02018930}{doi:10.1007/BF02018930}.
+
+\bibitem{EL}
+P. Erd\H{o}s and L. Lov\'asz,
+\emph{Problems and results on 3-chromatic hypergraphs and some related questions},
+in Infinite and Finite Sets, Vol. II,
+Colloq. Math. Soc. J\'anos Bolyai \textbf{10}, North-Holland,
+Amsterdam, 1975, 609--627.
+
+\bibitem{WorkingReport}
+Erd\H{o}s Problem a Day,
+\emph{Erd\H{o}s problem 911---wave 6q working report},
+July 27, 2026, accessed November 5, 2026.
+\url{https://erdosproblemaday.com/report/911}.
+
+\bibitem{GLSS}
+D. Gavinsky, S. Lovett, M. Saks and S. Srinivasan,
+\emph{A tail bound for read-$k$ families of functions},
+Random Structures Algorithms \textbf{47} (2015), 99--108.
+\href{https://arxiv.org/abs/1205.1478}{arXiv:1205.1478}.
+
+\bibitem{FormalConjectures}
+Google DeepMind and contributors,
+\emph{Formal Conjectures}, Erd\H{o}s problem 911,
+revision \texttt{7a33a65fc13b}, 2026.
+\href{https://github.com/google-deepmind/formal-conjectures/blob/7a33a65fc13b8ffb12be0fb0388f8d6fd62eb3e8/FormalConjectures/ErdosProblems/911.lean}{Frozen formal statement}.
+
+\bibitem{Karoubi}
+GPT-Erdos contributors,
+\emph{Erd\H{o}s problem 911: public working notes},
+contributor listed as Charlie Karoubi, January 19, 2026.
+\href{https://github.com/neelsomani/gpt-erdos/blob/b6eaefa73dfd5fb26c003266caf24e0a6602e77a/data/solutions/911/candidate_solution.md}{Versioned working notes}.
+
+\bibitem{Mathlib}
+The mathlib Community,
+\emph{mathlib4}, revision \texttt{c55e6e786f49}, 2026.
+\href{https://github.com/leanprover-community/mathlib4/tree/c55e6e786f49471c72fbddbec5415808896aec1e}{Pinned library source}.
+
+\bibitem{Pikhurko}
+O. Pikhurko,
+\emph{Asymptotic size Ramsey results for bipartite graphs},
+SIAM J. Discrete Math. \textbf{16} (2002), 99--113.
+\href{https://doi.org/10.1137/S0895480101384086}{doi:10.1137/S0895480101384086}.
+\end{thebibliography}
+\end{document}

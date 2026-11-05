@@ -1,0 +1,15 @@
+{
+  "checked_at_utc": "2026-11-05T22:51:12.147840+00:00",
+  "sources": [
+    "https://www.erdosproblems.com/911",
+    "https://www.erdosproblems.com/forum/thread/911/proof-claims"
+  ],
+  "proof_claims": 0,
+  "proof_expositions": 0,
+  "statement_formalized": true,
+  "priority_established": false,
+  "html_sha256": {
+    "official-problem": "2a417edb15e8309f36c08d177ef0f76cc8b40b4e7326a4a11d663c28b433c450",
+    "official-claims": "645a5f47388c4492bac8de98cc046cfd4ba3d406671d5a1b0bf8366b305fd942"
+  }
+}

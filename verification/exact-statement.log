@@ -1,0 +1,2 @@
+'Erdos911.erdos_911_full_proof' depends on axioms: [propext, Classical.choice, Quot.sound]
+Erdos911.erdos_911_full_proof : Erdos911.ExactStatement

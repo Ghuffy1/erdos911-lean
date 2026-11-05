@@ -1,0 +1,46 @@
+name: Verify exact Erdős 911 proof
+on:
+  push:
+    paths:
+      - '**/*.lean'
+      - 'lean-toolchain'
+      - 'lakefile.toml'
+      - 'lake-manifest.json'
+      - 'verify.py'
+      - 'audit/*.py'
+      - '.github/workflows/lean.yml'
+  pull_request:
+    paths:
+      - '**/*.lean'
+      - 'lean-toolchain'
+      - 'lakefile.toml'
+      - 'lake-manifest.json'
+      - 'verify.py'
+      - 'audit/*.py'
+      - '.github/workflows/lean.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      LEAN_NUM_THREADS: 1
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: leanprover/lean-action@fe408643ea7367d8c0404a8be3975bb145f5fb64
+        with:
+          auto-config: false
+          build: true
+          test: false
+          lint: false
+          use-mathlib-cache: true
+          leanchecker: true
+          leanchecker-args: --fresh Erdos911.FullProof
+      - name: Check literal statement
+        run: lake env lean audit/ExactCheck.lean
+      - name: Audit declared theorem dependencies
+        run: lake env lean audit/Axioms.lean
+      - name: Check original-statement correspondence and source hygiene
+        run: python audit/check_sources.py

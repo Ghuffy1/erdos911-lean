@@ -1,0 +1,32 @@
+{
+  "checked_at_utc": "2026-11-05T23:30:35.723439+00:00",
+  "proof_modules": 437,
+  "all_proof_code_matches_clean_build": true,
+  "raw_source_differences": [
+    {
+      "file": "Erdos911/HighBandReduction.lean",
+      "checked_sha256": "3caad3ea3793f334e8da6b8a11f8bd3ca09b2ad8330b5b95e505f8dcd80281e7",
+      "released_sha256": "5a9b515e33022e52d82657ee585b4aa5d36cf69d86564111cb69dca265bf7b23",
+      "difference": "comments and whitespace only"
+    },
+    {
+      "file": "Erdos911/StrongUnbalancedReduction.lean",
+      "checked_sha256": "1a06ee14d201cddae6f9a888999f0d142f74398b34135d035ec709005a2e2095",
+      "released_sha256": "b23c68ff31e1223b8a15fa5ea8c8d785feed213c0e37c6614863fa253507198d",
+      "difference": "comments and whitespace only"
+    },
+    {
+      "file": "Erdos911/HeavyPairReduction.lean",
+      "checked_sha256": "0e5cba81bc4b28be76202a2f39f0e431d4f3dec49fc18a8fb2733efe7445c7bd",
+      "released_sha256": "04455d6839146cc0b581410fe19d8397eba1c51583b45a7d7b1290ad667585ea",
+      "difference": "comments and whitespace only"
+    },
+    {
+      "file": "Erdos911/LargeRightBlockReduction.lean",
+      "checked_sha256": "68fd27bc4ca03cbbd3ca09d5ea3a6647bcc7618bc978f63fb8378a7d7d014100",
+      "released_sha256": "f487abc54310f7dd87ef8366d68b5c4bf3b956c482a790493cbac7e10d173261",
+      "difference": "comments and whitespace only"
+    }
+  ],
+  "note": "The four release edits update obsolete progress comments. Fresh-checkout CI rebuilds the released files themselves."
+}

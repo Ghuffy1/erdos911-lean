@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "Please cite the authors and the exact proof commit."
+title: "Size Ramsey numbers at high average degree"
+type: software
+version: 1.0.0
+repository-code: "https://github.com/Ghuffy1/erdos911-lean"
+url: "https://github.com/Ghuffy1/erdos911-lean"
+authors:
+  - family-names: Howe
+    given-names: Will
+    email: howew@purdue.edu
+    website: "https://github.com/H0W4RD-dev"
+  - family-names: Huffman
+    given-names: Grant
+    email: huffma97@purdue.edu
+    website: "https://github.com/Ghuffy1"
+  - family-names: Kohlmeyer
+    given-names: Jensen
+    email: jenwin@purdue.edu
+    website: "https://github.com/JENW1N"
+  - family-names: Kruer
+    given-names: Liam
+    email: kruerl@purdue.edu
+    website: "https://github.com/lkruer"
+abstract: >-
+  An AI-assisted mathematical proof and complete Lean formalization of
+  Erdős problem 911, with the original real-valued asymptotic statement
+  and strict size Ramsey inequality for all finite graphs of positive order.
+keywords:
+  - Lean
+  - Ramsey theory
+  - size Ramsey number
+  - Erdős problems

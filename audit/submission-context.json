@@ -1,0 +1,39 @@
+{
+  "checked_at_utc": "2026-11-05 22:32:12 UTC",
+  "catalog_blob_sha": "d08a1bc839fb69478c58bd153e542f85891ad543",
+  "jsp_id": "JSP-000756",
+  "erdos_number": 911,
+  "catalog_entry": "## JSP-000756 \u00b7 How does the size Ramsey number grow with the target graph's average degree?\n\n| Field | Content |\n| --- | --- |\n| Date proposed | No later than 1982 (bibliographic evidence) |\n| Mathematical area | Graph theory / Ramsey theory |\n| Problem description | How does the size Ramsey number grow with the target graph's average degree? |\n| Current status | Open |\n| Lean proof | No |\n| Eligible to claim | No |\n| Historical bounty |  |\n| Elapsed years | About 44 years (since 1982) |\n| Publication details |  |\n| Scholarly recognition |  |\n\n",
+  "pilot_register_blob_sha": "6321c22f775ef050060b0dd4253124a338057b7e",
+  "pilot_member": false,
+  "route": "legacy contribution pull request",
+  "priority_established": false,
+  "related_submissions": [
+    {
+      "number": 5223,
+      "url": "https://github.com/TheJustinSunPrize/awards/pull/5223",
+      "title": "JSP-000756: register Lean formalization (plby/lean-proofs)"
+    },
+    {
+      "number": 4208,
+      "url": "https://github.com/TheJustinSunPrize/awards/pull/4208",
+      "title": "JSP-000756: register Lean formalization (plby/lean-proofs)"
+    },
+    {
+      "number": 3902,
+      "url": "https://github.com/TheJustinSunPrize/awards/pull/3902",
+      "title": "JSP-000756: Lean formalization \u2014 size Ramsey vs degree"
+    },
+    {
+      "number": 3790,
+      "url": "https://github.com/TheJustinSunPrize/awards/pull/3790",
+      "title": "JSP-000756: register Lean formalization"
+    },
+    {
+      "number": 3703,
+      "url": "https://github.com/TheJustinSunPrize/awards/pull/3703",
+      "title": "JSP-000756: register Lean formalization"
+    }
+  ],
+  "statement_mismatch_review": "https://github.com/TheJustinSunPrize/awards/pull/5223#issuecomment-6517442704"
+}

@@ -1,0 +1,65 @@
+[
+  {
+    "name": "mathlib",
+    "expected": "c55e6e786f49471c72fbddbec5415808896aec1e",
+    "observed": "c55e6e786f49471c72fbddbec5415808896aec1e",
+    "match": true,
+    "tracked_dirty": 0
+  },
+  {
+    "name": "plausible",
+    "expected": "fb13df72ecefd8ddbf9291021d7f33a8673eb57b",
+    "observed": "fb13df72ecefd8ddbf9291021d7f33a8673eb57b",
+    "match": true,
+    "tracked_dirty": 0
+  },
+  {
+    "name": "LeanSearchClient",
+    "expected": "29ff470276c725ae01505d55b17148c18fc7dfd3",
+    "observed": "29ff470276c725ae01505d55b17148c18fc7dfd3",
+    "match": true,
+    "tracked_dirty": 0
+  },
+  {
+    "name": "importGraph",
+    "expected": "7e81a29bda33a6b257bd37557a6aa6aebe175d96",
+    "observed": "7e81a29bda33a6b257bd37557a6aa6aebe175d96",
+    "match": true,
+    "tracked_dirty": 0
+  },
+  {
+    "name": "proofwidgets",
+    "expected": "c643bbb3c24f8a25f9c14e3a6b1ceb13d01f3de1",
+    "observed": "c643bbb3c24f8a25f9c14e3a6b1ceb13d01f3de1",
+    "match": true,
+    "tracked_dirty": 0
+  },
+  {
+    "name": "aesop",
+    "expected": "a90fbf7b02ff06a0deebf74088dff9e5fe02c9ea",
+    "observed": "a90fbf7b02ff06a0deebf74088dff9e5fe02c9ea",
+    "match": true,
+    "tracked_dirty": 0
+  },
+  {
+    "name": "Qq",
+    "expected": "37b0ba0b26109cf9f9c541f0f9557e50cfa1a3b9",
+    "observed": "37b0ba0b26109cf9f9c541f0f9557e50cfa1a3b9",
+    "match": true,
+    "tracked_dirty": 0
+  },
+  {
+    "name": "batteries",
+    "expected": "3b7c8101932390d60e92a3f3d917901d5b5a773b",
+    "observed": "3b7c8101932390d60e92a3f3d917901d5b5a773b",
+    "match": true,
+    "tracked_dirty": 0
+  },
+  {
+    "name": "Cli",
+    "expected": "843844fa601dd56767b1eb22b7ada5b64d5e567a",
+    "observed": "843844fa601dd56767b1eb22b7ada5b64d5e567a",
+    "match": true,
+    "tracked_dirty": 0
+  }
+]
