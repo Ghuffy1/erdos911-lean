@@ -1,0 +1,5 @@
+import Init
+namespace CheckerControl
+theorem trueProof : True := True.intro
+def falseTarget : Prop := False
+end CheckerControl

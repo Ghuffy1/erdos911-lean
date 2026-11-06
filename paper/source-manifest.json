@@ -1,0 +1,21 @@
+{
+  "manuscript_sha256": "6f61976ff032087dbbc65c496c7e200f2cc652d592c036ec7dad20f225c594b1",
+  "original_manuscript_sha256": "bd26c036812d03eec6e31c75ee358027dbf4938257a8d3c18cba88d0ff8f4e51",
+  "verified_section_sha256": "62593ad1f945c038960fd2bfcb0a9e6149da84e8d7bf168349aead3c620cc4fc",
+  "authors": [
+    "Will Howe",
+    "Grant Huffman",
+    "Jensen Kohlmeyer",
+    "Liam Kruer"
+  ],
+  "repository": "https://github.com/Ghuffy1/erdos911-lean",
+  "proof_commit": "de87ff8e79ab35bac76c9af70f1a584249052ec1",
+  "main_theorem": "Erdos911.erdos_911_full_proof",
+  "changes": [
+    "Replaced the earlier unbalanced reduction with the checked dyadic and median normalization route",
+    "Used the checked q^20, q^50, q^43 and 128*q^69 dictionary parameters",
+    "Included both heavy and light pair arguments for left degrees in [P,d^4 P], P>=d^200",
+    "Updated the bounded-component constant to 2^48 and logarithmic coefficient to 1/8192",
+    "Documented literal-statement verification, pinned dependencies, standard axioms, and AI assistance"
+  ]
+}

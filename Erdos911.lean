@@ -277,9 +277,9 @@ import Erdos911.LargeRightBlockRamsey
 import Erdos911.FullProof
 
 /-!
-Partial formalization for the manuscript by Will Howe, Grant Huffman,
+Complete formalization for the manuscript by Will Howe, Grant Huffman,
 Jensen Kohlmeyer, and Liam Kruer. AI-assisted formalization using OpenAI Codex.
 
 The theorem of Erdős problem 911 is defined as `Erdos911.ExactStatement`.
-This project does not contain a proof of that proposition.
+The complete theorem is proved by Erdos911.erdos_911_full_proof.
 -/

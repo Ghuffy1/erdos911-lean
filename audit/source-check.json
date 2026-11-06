@@ -6,7 +6,7 @@
   "full_theorem_declared": true,
   "proof_verification_is_separate": true,
   "source_sha256": {
-    "Erdos911.lean": "9674503a3e5d21b3dd2c95c21609374335d582b806e9d7bd3c5e89f70b1fa14b",
+    "Erdos911.lean": "aa1a69afd6100b1a761dd2e7cf4fd64cf250d5e00cf63e7006d63321be3b290d",
     "Erdos911/AdaptiveSampling.lean": "7282de369f75504c875e53f5d1e9f2387cf0791465d820c0b980d2859ed65b80",
     "Erdos911/AmbientSeedColoring.lean": "0590dc8c948280d699332d406a9fef3b4293bfb14d12b86fad8be62af71b3eae",
     "Erdos911/AnchoredCopyCounting.lean": "2ea704004d61cdf06bed8322f814560a719aa7062a2ea869d32cf00b7c0ad669",

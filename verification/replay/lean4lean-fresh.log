@@ -1,0 +1,2 @@
+replaying Erdos911.FullProof with --fresh
+uncaught exception: failed to read file '<project-root>\.lake\verification\lib\lean\Erdos911\FullProof.olean', incompatible header

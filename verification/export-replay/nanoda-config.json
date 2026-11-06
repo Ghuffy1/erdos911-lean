@@ -1,0 +1,12 @@
+{
+  "use_stdin": false,
+  "export_file_path": "<export-dir>/full-proof.ndjson",
+  "permitted_axioms": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+  ],
+  "unpermitted_axiom_hard_error": true,
+  "num_threads": 1,
+  "string_extension": true
+}

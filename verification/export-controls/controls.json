@@ -1,0 +1,191 @@
+{
+  "checked_at_utc": "2026-11-05T23:54:58.325508+00:00",
+  "control_description": "The exported theorem type was changed from True to False, retaining its True.intro proof. Every checker also received the unchanged valid export first.",
+  "input_sha256": {
+    "valid.ndjson": "31605e78f172e2e787c4394565eaa83173f6e8aed02cc38a452c4c4ce638c60e",
+    "invalid.ndjson": "dd7cad5194c8f6d9d514632d4ec392214905d3d54b8608875967484976098c03"
+  },
+  "results": {
+    "leanchecker-paranoid": {
+      "valid_input_accepted": true,
+      "false_proof_rejected": true
+    },
+    "lean4lean": {
+      "valid_input_accepted": true,
+      "false_proof_rejected": true
+    },
+    "nanoda_bin": {
+      "valid_input_accepted": true,
+      "false_proof_rejected": true
+    },
+    "con-leche": {
+      "valid_input_accepted": true,
+      "false_proof_rejected": true
+    },
+    "con-ron": {
+      "valid_input_accepted": true,
+      "false_proof_rejected": true
+    }
+  },
+  "records": [
+    {
+      "name": "compile-control",
+      "command": [
+        "<elan-home>\\toolchains\\leanprover--lean4---v4.35.0-rc3\\bin\\lean.exe",
+        "-j1",
+        "--root=<project-root>\\.lake\\export-controls",
+        "-o",
+        "<project-root>\\.lake\\export-controls\\Control.olean",
+        "<project-root>\\.lake\\export-controls\\Control.lean"
+      ],
+      "exit_code": 0,
+      "log": "compile-control.log",
+      "binary_sha256": "cc24f20c0766382b971cd74cd67fb19413d16d01d6bc09ef90ed02c207cd6e1a",
+      "raw_local_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "export-control",
+      "command": [
+        "<elan-home>\\toolchains\\leanprover--lean4---v4.35.0-rc3\\bin\\leanexport.exe",
+        "Control",
+        "--",
+        "CheckerControl.trueProof",
+        "CheckerControl.falseTarget"
+      ],
+      "exit_code": 0,
+      "log": "export-control.log",
+      "binary_sha256": "05824a35ebd153603325242bd463e89ab137ed442074db2f4535c4ffa81827ee",
+      "raw_local_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "leanchecker-paranoid-valid",
+      "command": [
+        "<elan-home>\\toolchains\\leanprover--lean4---v4.35.0-rc3\\bin\\leanchecker-paranoid.exe",
+        "--silent",
+        "--from-export",
+        "<project-root>\\audit\\export-controls\\valid.ndjson"
+      ],
+      "exit_code": 0,
+      "log": "leanchecker-paranoid-valid.log",
+      "binary_sha256": "29276ba581c1c11edc8a8573ac1194ee95297325e9912e5eeb3bb77c45f7516f",
+      "raw_local_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "leanchecker-paranoid-invalid",
+      "command": [
+        "<elan-home>\\toolchains\\leanprover--lean4---v4.35.0-rc3\\bin\\leanchecker-paranoid.exe",
+        "--silent",
+        "--from-export",
+        "<project-root>\\audit\\export-controls\\invalid.ndjson"
+      ],
+      "exit_code": 1,
+      "log": "leanchecker-paranoid-invalid.log",
+      "binary_sha256": "29276ba581c1c11edc8a8573ac1194ee95297325e9912e5eeb3bb77c45f7516f",
+      "raw_local_log_sha256": "2d99775c12301add53c39114514731c91df9544ab44077d9c0f3cfd7e978f364",
+      "log_sha256": "2d99775c12301add53c39114514731c91df9544ab44077d9c0f3cfd7e978f364"
+    },
+    {
+      "name": "lean4lean-valid",
+      "command": [
+        "<elan-home>\\toolchains\\leanprover--lean4---v4.35.0-rc3\\bin\\lean4lean.exe",
+        "--import",
+        "<project-root>\\audit\\export-controls\\valid.ndjson"
+      ],
+      "exit_code": 0,
+      "log": "lean4lean-valid.log",
+      "binary_sha256": "e51ea50cf5103d14dec0bf5c8e15f4764fb42ea33b96767236ffffb84a8f4e51",
+      "raw_local_log_sha256": "ff2bbe4db451b88435fdda5c6ba7815fae20a8d6da450fdedcfd00462d94152a",
+      "log_sha256": "ff2bbe4db451b88435fdda5c6ba7815fae20a8d6da450fdedcfd00462d94152a"
+    },
+    {
+      "name": "lean4lean-invalid",
+      "command": [
+        "<elan-home>\\toolchains\\leanprover--lean4---v4.35.0-rc3\\bin\\lean4lean.exe",
+        "--import",
+        "<project-root>\\audit\\export-controls\\invalid.ndjson"
+      ],
+      "exit_code": 1,
+      "log": "lean4lean-invalid.log",
+      "binary_sha256": "e51ea50cf5103d14dec0bf5c8e15f4764fb42ea33b96767236ffffb84a8f4e51",
+      "raw_local_log_sha256": "2d99775c12301add53c39114514731c91df9544ab44077d9c0f3cfd7e978f364",
+      "log_sha256": "2d99775c12301add53c39114514731c91df9544ab44077d9c0f3cfd7e978f364"
+    },
+    {
+      "name": "nanoda_bin-valid",
+      "command": [
+        "<elan-home>\\toolchains\\leanprover--lean4---v4.35.0-rc3\\bin\\nanoda_bin.exe",
+        "<project-root>\\audit\\export-controls\\nanoda-valid.json"
+      ],
+      "exit_code": 0,
+      "log": "nanoda_bin-valid.log",
+      "binary_sha256": "3fc1d022f5f051f49be1d6263b72df62e17e1d0226b28b494517916d09c2fd38",
+      "raw_local_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "nanoda_bin-invalid",
+      "command": [
+        "<elan-home>\\toolchains\\leanprover--lean4---v4.35.0-rc3\\bin\\nanoda_bin.exe",
+        "<project-root>\\audit\\export-controls\\nanoda-invalid.json"
+      ],
+      "exit_code": 101,
+      "log": "nanoda_bin-invalid.log",
+      "binary_sha256": "3fc1d022f5f051f49be1d6263b72df62e17e1d0226b28b494517916d09c2fd38",
+      "raw_local_log_sha256": "ad002bba1e06e9e2e827bfd281a16e0c26075a849ad648df4af47e15e2cce710",
+      "log_sha256": "ad002bba1e06e9e2e827bfd281a16e0c26075a849ad648df4af47e15e2cce710"
+    },
+    {
+      "name": "con-leche-valid",
+      "command": [
+        "<elan-home>\\toolchains\\leanprover--lean4---v4.35.0-rc3\\bin\\con-leche.exe",
+        "<project-root>\\audit\\export-controls\\valid.ndjson"
+      ],
+      "exit_code": 0,
+      "log": "con-leche-valid.log",
+      "binary_sha256": "37ca6b277458808e6e3955322d827fa648721223d5711bfcfdcd00d91d29cf9f",
+      "raw_local_log_sha256": "def340f3da29cbd32b73dee8d2067e05c2703f5c5859448c1a6b26701b2429c1",
+      "log_sha256": "def340f3da29cbd32b73dee8d2067e05c2703f5c5859448c1a6b26701b2429c1"
+    },
+    {
+      "name": "con-leche-invalid",
+      "command": [
+        "<elan-home>\\toolchains\\leanprover--lean4---v4.35.0-rc3\\bin\\con-leche.exe",
+        "<project-root>\\audit\\export-controls\\invalid.ndjson"
+      ],
+      "exit_code": 3,
+      "log": "con-leche-invalid.log",
+      "binary_sha256": "37ca6b277458808e6e3955322d827fa648721223d5711bfcfdcd00d91d29cf9f",
+      "raw_local_log_sha256": "72d85e84395b1bef0640de29ead1b9f7b009a8f47b22491e711420a5426bfa3e",
+      "log_sha256": "c2d41899b668a876d5f88586e43806009483cc2344d7701ad127e15e767eba39"
+    },
+    {
+      "name": "con-ron-valid",
+      "command": [
+        "<elan-home>\\toolchains\\leanprover--lean4---v4.35.0-rc3\\bin\\con-ron.exe",
+        "<project-root>\\audit\\export-controls\\valid.ndjson"
+      ],
+      "exit_code": 0,
+      "log": "con-ron-valid.log",
+      "binary_sha256": "4dd2aaf87cbb093f637f6a91cf8a9f7509827aa19aa72a160f5c7585336ae45c",
+      "raw_local_log_sha256": "3e9cba3e20032fc482e5b429e86912ad024877e799f79a447e7074bb98078421",
+      "log_sha256": "3e9cba3e20032fc482e5b429e86912ad024877e799f79a447e7074bb98078421"
+    },
+    {
+      "name": "con-ron-invalid",
+      "command": [
+        "<elan-home>\\toolchains\\leanprover--lean4---v4.35.0-rc3\\bin\\con-ron.exe",
+        "<project-root>\\audit\\export-controls\\invalid.ndjson"
+      ],
+      "exit_code": 3,
+      "log": "con-ron-invalid.log",
+      "binary_sha256": "4dd2aaf87cbb093f637f6a91cf8a9f7509827aa19aa72a160f5c7585336ae45c",
+      "raw_local_log_sha256": "995778ddbd8ca3a7c52d14c6b50c5798ed53aec4504018751bfdacd103eb0f6f",
+      "log_sha256": "f916a98597466b84829d33713f64298d7ad03499c35b8a9ef41d307054807ccb"
+    }
+  ],
+  "all_controls_passed": true,
+  "actual_erdos_proof_modified": false
+}

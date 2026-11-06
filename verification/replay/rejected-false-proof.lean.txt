@@ -1,0 +1,3 @@
+import Erdos911.FullProof
+example : False := by
+  exact True.intro

@@ -1,0 +1,7 @@
+{
+  "checked_at_utc": "2026-11-05T23:35:43.625463+00:00",
+  "proof_commit": "de87ff8e79ab35bac76c9af70f1a584249052ec1",
+  "proof_sources": 437,
+  "commit_blobs_match_release_manifest": true,
+  "working_proof_sources_match_commit": true
+}

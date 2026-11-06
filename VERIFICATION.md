@@ -72,3 +72,10 @@ positive cutoffs. The residual-codegree rectangle lemma retains `q ≥ 1`,
 The high-degree normalization and large-right-block argument use the constants
 of the checked source. Earlier incomplete progress records are preserved
 separately from the release; they are not the current proof status.
+
+## Public version and completed checks
+
+The selected proof is `de87ff8e79ab35bac76c9af70f1a584249052ec1` in [Ghuffy1/erdos911-lean](https://github.com/Ghuffy1/erdos911-lean/tree/de87ff8e79ab35bac76c9af70f1a584249052ec1).
+See [the final verification record](verification/README.md) for the successful
+fresh-checkout CI, native replay, negative controls and individually reported
+export-checker outcomes. These later records do not alter the proof files.

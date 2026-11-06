@@ -1,0 +1,70 @@
+{
+  "checked_at_utc": "2026-11-05 23:37:23 UTC",
+  "jsp_id": "JSP-000756",
+  "erdos_problem": 911,
+  "catalog_status": "Open",
+  "lean_proof": "No",
+  "eligible_to_claim": "No",
+  "mathdb_pilot_member": false,
+  "route": "legacy contribution pull request",
+  "sources": [
+    {
+      "path": "problems/catalog-0701-0800.md",
+      "blob_sha": "d08a1bc839fb69478c58bd153e542f85891ad543"
+    },
+    {
+      "path": "problems/mathdb-pilot.md",
+      "blob_sha": "6321c22f775ef050060b0dd4253124a338057b7e"
+    },
+    {
+      "path": ".github/PULL_REQUEST_TEMPLATE.md",
+      "blob_sha": "97bcca1687029819621b37bec25fec3af52f42ad"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "blob_sha": "33035cb6ee2cb4df5d0e98268dcb94496fbec14e"
+    },
+    {
+      "path": "docs/verification.md",
+      "blob_sha": "30cce06b9817102690e6e07c73338ebdd490154e"
+    },
+    {
+      "path": "docs/award-process.md",
+      "blob_sha": "bbb5eb1e7b8eb67f0a348c7151a4d1cac91d67c4"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/claim-award.yml",
+      "blob_sha": "ecc98aae0b66743a7836086b96c0a7b79bb228b8"
+    }
+  ],
+  "related_prs": [
+    {
+      "number": 5223,
+      "url": "https://github.com/TheJustinSunPrize/awards/pull/5223",
+      "title": "JSP-000756: register Lean formalization (plby/lean-proofs)"
+    },
+    {
+      "number": 4208,
+      "url": "https://github.com/TheJustinSunPrize/awards/pull/4208",
+      "title": "JSP-000756: register Lean formalization (plby/lean-proofs)"
+    },
+    {
+      "number": 3902,
+      "url": "https://github.com/TheJustinSunPrize/awards/pull/3902",
+      "title": "JSP-000756: Lean formalization \u2014 size Ramsey vs degree"
+    },
+    {
+      "number": 3790,
+      "url": "https://github.com/TheJustinSunPrize/awards/pull/3790",
+      "title": "JSP-000756: register Lean formalization"
+    },
+    {
+      "number": 3703,
+      "url": "https://github.com/TheJustinSunPrize/awards/pull/3703",
+      "title": "JSP-000756: register Lean formalization"
+    }
+  ],
+  "priority_established": false,
+  "external_submission_sent": false,
+  "award_process_checked_at_utc": "2026-11-05T23:58:54.421989+00:00"
+}

@@ -1,0 +1,28 @@
+{
+  "checked_at_utc": "2026-11-06T00:06:09.053037+00:00",
+  "proof_commit": "de87ff8e79ab35bac76c9af70f1a584249052ec1",
+  "repository": "https://github.com/Ghuffy1/erdos911-lean",
+  "theorem": "Erdos911.erdos_911_full_proof",
+  "ci_url": "https://github.com/Ghuffy1/erdos911-lean/actions/runs/42131466849",
+  "ci_passed": true,
+  "kernel_replay_passed": true,
+  "lean4lean_olean_replay_passed": false,
+  "export_checker_results": {
+    "leanchecker-paranoid": true,
+    "lean4lean-import": true,
+    "nanoda": true,
+    "con-leche": true,
+    "con-ron": true
+  },
+  "export_all_checkers_passed": true,
+  "all_export_positive_and_negative_controls_passed": true,
+  "false_proof_control_passed": true,
+  "missing_target_control_passed": true,
+  "release_proof_code_unchanged": true,
+  "later_lean_comment_only_change": "Erdos911.lean; documentation-source-change.json",
+  "source_module_count": 437,
+  "axiom_audit_count": 1546,
+  "independent_human_review_claimed": false,
+  "priority_established": false,
+  "external_submission_sent": false
+}

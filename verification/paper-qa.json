@@ -1,0 +1,17 @@
+{
+  "pages": 28,
+  "out_of_page_characters": [],
+  "unresolved_reference_marker": false,
+  "emails": [
+    "howew@purdue.edu",
+    "huffma97@purdue.edu",
+    "jenwin@purdue.edu",
+    "kruerl@purdue.edu"
+  ],
+  "last_page_text": "28 WILLHOWE,GRANTHUFFMAN,JENSENKOHLMEYER,ANDLIAMKRUER\nReferences\n[1] D. Conlon, J. Fox and Y. Wigderson, Three early problems on size Ramsey numbers, Combinatorica 43 (2023),\n743\u2013768. doi:10.1007/s00493-023-00034-7.\n[2] L. DeBiasio, A note on the multicolor size-Ramsey numbers of connected graphs, a",
+  "pdf_sha256": "48ca38385329930f6c2e6209967d518799cebe35761d081f8b152f7c4c189e23",
+  "font_count": 25,
+  "all_fonts_embedded": true,
+  "expected_proof_commit": "de87ff8e79ab35bac76c9af70f1a584249052ec1",
+  "proof_link_present": true
+}

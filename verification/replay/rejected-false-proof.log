@@ -1,0 +1,6 @@
+<project-root>\.lake\replay-controls\InvalidProof.lean:3:2: error: Type mismatch
+  True.intro
+has type
+  True
+but is expected to have type
+  False

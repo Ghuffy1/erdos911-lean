@@ -1,0 +1,9 @@
+{
+  "checked_at_utc": "2026-11-05T23:57:42.577499+00:00",
+  "file": "Erdos911.lean",
+  "proof_commit": "de87ff8e79ab35bac76c9af70f1a584249052ec1",
+  "original_sha256": "9674503a3e5d21b3dd2c95c21609374335d582b806e9d7bd3c5e89f70b1fa14b",
+  "corrected_sha256": "aa1a69afd6100b1a761dd2e7cf4fd64cf250d5e00cf63e7006d63321be3b290d",
+  "change": "Only two phrases in the existing final documentation comment were corrected.",
+  "imports_and_proof_declarations_unchanged": true
+}

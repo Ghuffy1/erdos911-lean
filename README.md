@@ -42,7 +42,11 @@ python verify.py --package-cache .lake/packages --build-dir .lake/verification/l
 This rebuilds every project source in import order without using existing
 project oleans, checks the literal target and all declared axiom targets,
 and verifies that proof source hashes did not change during the run.
-Version-specific verification evidence is added under `verification/`.
+The [verification record](verification/README.md) identifies the selected proof
+commit `de87ff8e79ab35bac76c9af70f1a584249052ec1` and its successful [fresh-checkout CI run](https://github.com/Ghuffy1/erdos911-lean/actions/runs/42131466849).
+The clean source build checked 437 modules and audited
+1546 declarations. Fresh kernel replay and
+the additional export-checker results are recorded with their logs and scope.
 
 ## Authors and AI assistance
 

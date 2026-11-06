@@ -1,0 +1,3 @@
+Error: Nat lit extension disallowed by checker execution config, but export file contains a nat literal "{\"ie\":287,\"natVal\":\"0\"}\n"
+
+run with `-h` or `--help` for help
