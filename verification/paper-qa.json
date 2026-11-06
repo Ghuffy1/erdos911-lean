@@ -1,17 +1,22 @@
 {
-  "pages": 28,
+  "pages": 27,
+  "pdf_sha256": "5631e8d5bb2b7733dda2062edfa552a7f1f0a30b330ceddda57a65afdb09e312",
   "out_of_page_characters": [],
   "unresolved_reference_marker": false,
+  "implementation_references": [],
   "emails": [
     "howew@purdue.edu",
     "huffma97@purdue.edu",
     "jenwin@purdue.edu",
     "kruerl@purdue.edu"
   ],
-  "last_page_text": "28 WILLHOWE,GRANTHUFFMAN,JENSENKOHLMEYER,ANDLIAMKRUER\nReferences\n[1] D. Conlon, J. Fox and Y. Wigderson, Three early problems on size Ramsey numbers, Combinatorica 43 (2023),\n743\u2013768. doi:10.1007/s00493-023-00034-7.\n[2] L. DeBiasio, A note on the multicolor size-Ramsey numbers of connected graphs, a",
-  "pdf_sha256": "48ca38385329930f6c2e6209967d518799cebe35761d081f8b152f7c4c189e23",
-  "font_count": 25,
+  "font_count": 24,
   "all_fonts_embedded": true,
-  "expected_proof_commit": "de87ff8e79ab35bac76c9af70f1a584249052ec1",
-  "proof_link_present": true
+  "github_or_local_file_links": [],
+  "ai_acknowledgment_present": true,
+  "last_page_preview": "SIZE RAMSEY NUMBERS AT HIGH AVERAGE DEGREE 27\nReferences\n[1] D. Conlon, J. Fox and Y. Wigderson, Three early problems on size Ramsey numbers, Combinatorica 43 (2023),\n743\u2013768. doi:10.1007/s00493-023-00034-7.\n[2] L. DeBiasio, A note on the multicolor ",
+  "visual_reviewed_pages": 27,
+  "visual_reviewed_at_utc": "2026-11-06T00:28:22.735781+00:00",
+  "self_contained_mathematical_paper": true,
+  "selected_proof_commit": "de87ff8e79ab35bac76c9af70f1a584249052ec1"
 }

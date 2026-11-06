@@ -50,8 +50,7 @@ range. Degree-band reductions then assemble these estimates without a loss
 depending on the number of degree scales. The bound is uniform in the order,
 number of components, and component multiplicities of the target graph.
 A uniform dictionary argument treats the strongly unbalanced incidence
-targets. The full theorem is formalized in Lean, with the original
-quantifiers and the strict size Ramsey inequality.
+targets.
 \end{abstract}
 \maketitle
 
@@ -1346,67 +1345,10 @@ Extend $f$ to smaller real arguments arbitrarily.
 \end{proof}
 
 
-\section{Formal verification}\label{sec:formal}
-
-The complete proof has been formalized in Lean. Its final declaration is
-\begin{center}
-\texttt{Erdos911.erdos\_911\_full\_proof : Erdos911.ExactStatement}.
-\end{center}
-The proposition \texttt{ExactStatement} is the original statement of
-Erd\H{o}s problem 911 in the Formal Conjectures library\cite{FormalConjectures},
-including its real-valued function, its limit at positive infinity, the
-uniform density threshold, every positive finite graph order, and the
-strict conclusion. The definition of the size Ramsey number is also the
-same. An additional acceptance file writes out the complete proposition
-and checks the proof against it.
-
-The source uses Lean \texttt{v4.35.0-rc3} and the pinned mathlib revision
-\texttt{c55e6e786f49}\cite{Mathlib}. The final theorem's transitive axiom
-dependencies are only propositional extensionality, classical choice,
-and quotient soundness. No admitted proof step or additional unproved
-assumption is used. In particular, the conditional reductions in the
-source are supplied with proofs of their premises in the final theorem.
-
-\begin{samepage}
-The correspondence with the main parts of the exposition is as follows.
-\begin{center}
-\small
-\begin{tabular}{p{0.42\textwidth}p{0.48\textwidth}}
-Mathematical step & Lean source module \\
-\hline
-Dyadic decomposition and normalization &
-\texttt{HighBandReduction},\newline \texttt{UnbalancedMedianNormalization} \\
-Uniform dictionary and row assignment &
-\texttt{TargetBlockTests},\newline \texttt{DictionaryRowAssignment} \\
-Monochromatic block obstruction &
-\texttt{CheapMonochromaticBlock} \\
-Large-right and strongly unbalanced cases &
-\texttt{LargeRightBlockRamsey},\newline \texttt{HeavyPairReduction} \\
-Bounded component palette & \texttt{BoundedComponentPalette} \\
-Near-regular and incidence estimates &
-\texttt{NearRegularRamsey},\newline \texttt{IncidenceRamsey} \\
-Polynomial-degree and exact conclusions &
-\texttt{PolynomialRamsey},\newline \texttt{FullProof}
-\end{tabular}
-\end{center}
-\end{samepage}
-
-The source includes the concrete floor and ceiling choices and the
-numerical inequalities behind the asymptotic statements in the paper.
-The center lemma requires $s\ge2$ and positive cutoffs, and the
-residual-codegree lemma retains $q\ge1$, $ D>0$, $\rho\ge0$, and
-$T'\ge2q$; these hypotheses are checked at their uses.
-
-The accompanying \href{https://github.com/Ghuffy1/erdos911-lean/tree/de87ff8e79ab35bac76c9af70f1a584249052ec1}{proof repository} records the complete source, build instructions,
-and verification evidence at commit \texttt{de87ff8e79ab}.
-
-
 \section*{Acknowledgments}
-OpenAI's ChatGPT and Codex were used for mathematical exploration, proof
-development, Lean formalization, and editing. This assistance is disclosed
-explicitly; the authors are responsible for the final manuscript. We retain
-the attribution and license notices of third-party formalization sources in
-the accompanying code.
+The authors acknowledge assistance from OpenAI's ChatGPT and Codex in
+mathematical exploration and preparation of the manuscript. The authors
+are responsible for the results and exposition.
 
 \clearpage
 \begin{thebibliography}{99}
@@ -1452,7 +1394,7 @@ Amsterdam, 1975, 609--627.
 
 \bibitem{WorkingReport}
 Erd\H{o}s Problem a Day,
-\emph{Erd\H{o}s problem 911---wave 6q working report},
+\emph{Erd\H{o}s problem 911: working report},
 July 27, 2026, accessed November 5, 2026.
 \url{https://erdosproblemaday.com/report/911}.
 
@@ -1462,22 +1404,10 @@ D. Gavinsky, S. Lovett, M. Saks and S. Srinivasan,
 Random Structures Algorithms \textbf{47} (2015), 99--108.
 \href{https://arxiv.org/abs/1205.1478}{arXiv:1205.1478}.
 
-\bibitem{FormalConjectures}
-Google DeepMind and contributors,
-\emph{Formal Conjectures}, Erd\H{o}s problem 911,
-revision \texttt{7a33a65fc13b}, 2026.
-\href{https://github.com/google-deepmind/formal-conjectures/blob/7a33a65fc13b8ffb12be0fb0388f8d6fd62eb3e8/FormalConjectures/ErdosProblems/911.lean}{Frozen formal statement}.
-
 \bibitem{Karoubi}
-GPT-Erdos contributors,
+C. Karoubi,
 \emph{Erd\H{o}s problem 911: public working notes},
-contributor listed as Charlie Karoubi, January 19, 2026.
-\href{https://github.com/neelsomani/gpt-erdos/blob/b6eaefa73dfd5fb26c003266caf24e0a6602e77a/data/solutions/911/candidate_solution.md}{Versioned working notes}.
-
-\bibitem{Mathlib}
-The mathlib Community,
-\emph{mathlib4}, revision \texttt{c55e6e786f49}, 2026.
-\href{https://github.com/leanprover-community/mathlib4/tree/c55e6e786f49471c72fbddbec5415808896aec1e}{Pinned library source}.
+contribution to the GPT-Erdos project, January 19, 2026.
 
 \bibitem{Pikhurko}
 O. Pikhurko,
