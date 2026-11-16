@@ -1,5 +1,5 @@
 {
-  "manuscript_sha256": "f4112b95f41c89feadf1c7cf79a882eb6083badf9f129fd23315a1471aab3c2c",
+  "manuscript_sha256": "5ebdbf2ff4e11a3a2f6b62e96357321d579d52fbc0f0ba52abe97359ea867b7c",
   "original_manuscript_sha256": "6f61976ff032087dbbc65c496c7e200f2cc652d592c036ec7dad20f225c594b1",
   "authors": [
     "Will Howe",
@@ -8,11 +8,14 @@
     "Liam Kruer"
   ],
   "proof_commit": "de87ff8e79ab35bac76c9af70f1a584249052ec1",
-  "mathematical_exposition_unchanged": true,
+  "mathematical_exposition_unchanged": false,
   "self_contained_mathematical_paper": true,
   "changes": [
     "Removed formalization section, module table, file paths, commit identifiers and implementation links",
     "Retained the complete mathematical exposition and standard scholarly references",
-    "Kept a brief AI acknowledgement"
-  ]
+    "Kept a brief AI acknowledgement",
+    "November 16, 2026 revision states the Ramsey-host hypothesis H → G in Proposition 4.5 and Lemma 5.3",
+    "Makes the inherited Ramsey property explicit in both proofs and handles the empty selection in Lemma 5.3"
+  ],
+  "previous_manuscript_sha256": "5631e8d5bb2b7733dda2062edfa552a7f1f0a30b330ceddda57a65afdb09e312"
 }

@@ -34,7 +34,7 @@
 \email[Jensen Kohlmeyer]{jenwin@purdue.edu}
 \author{Liam Kruer}
 \email[Liam Kruer]{kruerl@purdue.edu}
-\date{November 5, 2026}
+\date{November 5, 2026 (revised November 16, 2026)}
 \subjclass[2020]{05C55, 05D10}
 \keywords{size Ramsey number, graph density, probabilistic method, Lov\'asz local lemma}
 \begin{document}
@@ -849,13 +849,13 @@ The displayed palette-size upper bound is stronger than what the last inequality
 
 \begin{proposition}\label{prop:local-sparsity}
 
-Fix $A,B,M\ge1$. Suppose $ G $ has minimum degree at least $ d $, maximum degree at most $ d^B $, and a host of at most $ Md\,e(G)$ edges. For sufficiently large $ d $ there is a subgraph $ F $ with at least $ e(G)/4$ edges, minimum degree at least $ q=\lfloor d/4\rfloor $, maximum degree at most $ d^B$, and
+Fix $A,B,M\ge1$. Suppose $ G $ has minimum degree at least $ d $ and maximum degree at most $ d^B $. Let $H$ be a host with $H\to G$ and $e(H)\le Md\,e(G)$. For sufficiently large $ d $ there is a subgraph $ F $ with at least $ e(G)/4$ edges, minimum degree at least $ q=\lfloor d/4\rfloor $, maximum degree at most $ d^B$, and
 
 \begin{equation}
 e_F(U)\le C_{A,B}\log q\,|U|\qquad(|U|\le q^A).
 \end{equation}
 
-The same host has at most $20Mq\,e(F)$ edges. In particular, the polynomial maximum-degree reduction may also impose this local density condition.
+The same host satisfies $H\to F$ and has at most $20Mq\,e(F)$ edges. In particular, the polynomial maximum-degree reduction may also impose this local density condition.
 
 \end{proposition}
 
@@ -872,7 +872,7 @@ If these removals delete at least $e(G)/4$ edges, their union $ W $ has $ e(W)\g
 
 a contradiction for large $d$.
 
-Otherwise at least $3e(G)/4$ edges remain. Peel vertices of current degree below $ q $. Since $ v(G)\le2e(G)/d $, this removes at most $ e(G)/2$ more edges. The resulting $ F $ has at least $ e(G)/4$ edges and inherits the maximum degree bound. Every remaining set of at most $ K $ vertices has fewer than $ s $ times its order edges. Since $ q^A\le K $ and $\log d=O(\log q)$, the claimed density bound follows. Finally $ d\le5q $ and $ e(G)\le4e(F)$.
+Otherwise at least $3e(G)/4$ edges remain. Peel vertices of current degree below $ q $. Since $ v(G)\le2e(G)/d $, this removes at most $ e(G)/2$ more edges. The resulting $ F $ has at least $ e(G)/4$ edges and inherits the maximum degree bound. Every remaining set of at most $ K $ vertices has fewer than $ s $ times its order edges. Since $ q^A\le K $ and $\log d=O(\log q)$, the claimed density bound follows. Since $F\subseteq G$ and $H\to G$, we have $H\to F$. Finally $ d\le5q $ and $ e(G)\le4e(F)$.
 
 \end{proof}
 
@@ -975,7 +975,7 @@ under the stated condition with sufficiently large $C_{A,B}$. There is an outcom
 
 \begin{lemma}\label{lem:class-mass}
 
-Fix $M,B\ge1$ and $ L>1$. Suppose $ G $ has minimum degree at least $ d $, maximum degree at most $ d^B $, and a host of at most $ Md\,e(G)$ edges. For some $ K_0=K_0(L,B)$, select in each order-and-edge-count class $(k,a)$ any collection of at most
+Fix $M,B\ge1$ and $ L>1$. Suppose $ G $ has minimum degree at least $ d $ and maximum degree at most $ d^B $. Let $H$ be a host with $H\to G$ and $e(H)\le Md\,e(G)$. For some $ K_0=K_0(L,B)$, select in each order-and-edge-count class $(k,a)$ any collection of at most
 
 \begin{equation}
 \exp\bigl(a(\log d-\log\log d-K_0)\bigr)
@@ -987,7 +987,7 @@ distinct component types. The union of all their occurrences in $G $ has fewer t
 
 \begin{proof}
 
-Let $W $ be the unionof these selected components. The entropy of its component types splits into the entropy of the class and the conditional type entropy inside the class. The conditional term, multiplied by the number of components, is at most $ e(W)(\ln d-\ln\ln d-K)$. The class term is only $ O(e(W)/d)$. For example use a probability distribution on possible classes assigning mass $2^{-k}$ to order $ k $ and dividing that mass uniformly across integers $0\le a\le \lfloor\Delta k/2\rfloor $. Cross entropy bounds the class entropy by the mean of $ k\ln2+\ln(1+\Delta k)$ over components. Its sum is $ O(v(W))$ because each order is at least $ d+1$ and $\Delta $ is polynomial in $ d $. Apply Proposition~\ref{prop:forest-entropy} with multiplier $ d^L $. For $ K $ sufficiently large, $\widehat R(W)>d^Le(W)$. Since the original host arrows $ W$, the claimed mass bound follows.
+Let $W$ be the union of these selected components. The claimed bound holds if $W$ is empty. Otherwise, the entropy of its component types splits into the entropy of the class and the conditional type entropy inside the class. The conditional term, multiplied by the number of components, is at most $e(W)(\ln d-\ln\ln d-K_0)$. The class term is only $ O(e(W)/d)$. For example use a probability distribution on possible classes assigning mass $2^{-k}$ to order $ k $ and dividing that mass uniformly across integers $0\le a\le \lfloor\Delta k/2\rfloor $. Cross entropy bounds the class entropy by the mean of $ k\ln2+\ln(1+\Delta k)$ over components. Its sum is $ O(v(W))$ because each order is at least $ d+1$ and $\Delta $ is polynomial in $ d $. Apply Proposition~\ref{prop:forest-entropy} with multiplier $ d^L $. For $K_0$ sufficiently large, $\widehat R(W)>d^Le(W)$. Since $W\subseteq G$ and $H\to G$, we have $H\to W$. Thus $d^Le(W)<\widehat R(W)\le e(H)\le Md\,e(G)$, which gives the claimed mass bound.
 
 \end{proof}
 
